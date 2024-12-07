@@ -174,3 +174,29 @@ SecurityMetadataSource: 요청 리소스의 권한 정보를 제공.
 사용되는 빈:
 CsrfTokenRepository: CSRF 토큰을 저장하고 로드.
 CsrfToken: 요청마다 검증되는 CSRF 토큰 객체.
+
+
+
+
+** UserDetails 인터페이스와 UserDetailService 서비스 클래스
+
+* UserDetails 인터페이스
+
+1. UserDetails의 역할
+스프링 시큐리티에서 사용자 정보를 나타내는 표준 인터페이스.
+
+2. UserDetails의 주요 메서드
+getUsername() : 사용자 이름(로그인 식별자)을 반환. UserDetailService를 통해 로드된 사용자 객체에서 이 값을 기반으로 인증을 수행.
+
+getPassword() : 암호화된 비밀번호를 반환. 인증 과정에서 사용자가 입력한 비밀번호와 비교하는 데 사용.
+
+getAuthorities() : 사용자가 가진 권한(roles 또는 authorities)을 반환. 권한 정보는 인가(Authorization) 과정에서 특정 URL이나 메서드 접근을 제어하는 데 사용.
+
+계정 상태 확인 메서드들 : 이 메서드들은 인증 과정에서 계정 상태를 검증할 때 호출되며, 기본적으로 true로 설정.
+isAccountNonExpired(): 계정이 만료되지 않았는지 확인.
+isAccountNonLocked(): 계정이 잠기지 않았는지 확인.
+isCredentialsNonExpired(): 비밀번호가 만료되지 않았는지 확인.
+isEnabled(): 계정이 활성 상태인지 확인.
+
+
+* UserDetailService 서비스 클래스
