@@ -1,0 +1,510 @@
+<jdk> 
+
+설치 경로
+C:\jdk11
+
+버전
+C:\Users\Administrator>java -version
+java version "11.0.20" 2023-07-18 LTS
+Java(TM) SE Runtime Environment 18.9 (build 11.0.20+9-LTS-256)
+Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.20+9-LTS-256, mixed mode)
+
+
+
+maria db
+버전 10.5
+설치 경로
+C:\Program Files\MariaDB 10.5
+root password 12341234
+포트번호 3307
+utf-8 사용
+
+
+heidiSQL
+버전 12.6.0.6765
+세팅1. 사용자 추가
+도구 - 사용자 관리자 - 추가 - 
+사용자 이름 : webuser
+호스트에서 : 모든 곳에서 접근
+암호 : webuser - 저장
+세팅2. db 생성
+데이터베이스 필터 빈 화면에서 오른쪽 클릭 - 새로 생성 - 데이터베이스
+- 이름 webdb - 확인
+
+
+<전자정부>
+eGovFrameDev-4.1.0-64bit
+
+설치 경로
+C:\eGovFrameDev-4.1.0-64bit\eclipse
+워크스페이스
+C:\eGovFrameDev-4.1.0-64bit\workspace
+
+
+
+<maven>
+설치 경로
+C:\apache-maven-3.9.6
+시스템 path 편집 사용
+C:\apache-maven-3.9.6\bin
+
+
+
+
+<eclipse>
+
+설치 경로
+C:\Users\Administrator\eclipse\jee-2023-12\eclipse
+
+작업 경로
+C:\Users\Administrator\eclipse-workspace
+
+
+신규 이클립스 JVM 경로 
+C:\Program Files\OpenLogic\jdk-17.0.9.9-hotspot
+신규 이클립스  설치 경로
+C:\eclipse
+신규 이클립스 작업 경로
+C:\eclipse_new_workspace
+
+Server Shutdown Port : 8806
+이클립스
+HTTP/1.1 Connector Port : 8080
+
+이클립스에서 서블릿 파일(.java)가 컴파일 된 클래스 파일이 있는 경로
+C:\eclipse_new_workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\pro5\WEB-INF\classes
+이클립스에서 jsp 파일(.jsp)이 컴파일 된 클래스 파일이 있는 경로
+C:\eclipse_new_workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\work\Catalina\localhost\pro5\org\apache\jsp
+
+
+
+<이클립스에서 사용하는 jdk>
+
+버전 : 17
+경로
+C:/Users/Administrator/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.9.v20231028-0858/jre/bin
+
+
+
+<Node.js>
+버전 : node-v20.11.0
+
+
+
+<Anaconda> python
+버전 : Anaconda3-2023.09-0-Windows-x86_64
+설치 경로(파이썬 경로) : C:\ProgramData\anaconda3
+파이썬 라이브러리 경로 : C:\ProgramData\anaconda3\Lib\site-packages
+
+
+<VirtualBox>
+버전 : 7.0.14
+설치경로
+C:\Program Files\Oracle\VirtualBox
+vm 경로
+C:\Users\Administrator\VirtualBox VMs
+
+
+
+<CentOS>
+버전 : 7.9.2009
+ROOT PASSWORD : 12341234
+USER CREATION //  id :  user1 / password : user1
+
+
+
+<Oracle Database>
+버전 : 오라클 11g base
+Oracle Base 위치 : C:\app\Administrator
+소프트웨어 위치 : C:\app\Administrator\product\11.2.0\dbhome_1
+라이브러리 위치 : C:\app\Administrator\product\11.2.0\dbhome_1\jdbc\lib
+데이터베이스 파일 위치 : C:\app\Administrator\oradata
+데이터베이스버전 : Enterprise Edition
+전역 데이터베이스 이름 / SID(시스템 식별자) : orcl
+host : localhost
+Connection URL : jdbc:oracle:thin:@localhost:1521:orcl
+jdbc driver : ojdbc.jar
+
+아이디들
+1. hr
+2. scott
+3. system
+비밀번호 : 전부 12341234
+오라클 포트 : 1521
+
+
+
+*리눅스에 jdk 11 설치하는 방법
+root로 로그인(비번 12341234)
+터미널 켜기
+yum install java-11-openjdk-devel 입력
+java -version
+버전 확인해서 11로 되어있지 않을 경우, PATH 설정해야한다.
+find =name javac 입력해서 jdk 설치 경로 확인
+
+nano.bash_profile 들어가서
+ export JAVA_HOME=jdk 설치 경로 디렉토리
+ PATH=$JAVA_HOME/bin:$PATH:$HOME/bin
+ export PATH
+
+export JAVA_HOME=/usr/lib/jvm/java
+
+
+<Git>
+설치경로
+C:\Program Files\Git
+버전
+Git-2.43.0-64-bit
+the name of the initial branch in new repositories(기본 브랜치 이름) : "main"
+
+* 깃허브에서 프로젝트를 내 로컬 컴퓨터로 가져오는 방법
+
+C:\Users\Administrator>cd /
+C:\>cd ex(저장할 폴더)
+C:\ex>git clone https://github.com/gilbutITbook/006960.git (깃허브에서 프로젝트 주소)
+Cloning into '006960'...
+remote: Enumerating objects: 244, done.
+remote: Total 244 (delta 0), reused 0 (delta 0), pack-reused 244
+Receiving objects: 100% (244/244), 502.48 KiB | 27.92 MiB/s, done.
+Resolving deltas: 100% (41/41), done.
+
+C:\ex>
+
+
+
+<SourceTree>
+버전
+SourceTreeSetup-3.4.16
+
+
+
+<apache Tomcat>
+버전
+apache-tomcat-9.0.85
+
+Server Shutdown Port : 8805
+HTTP/1.1 Connector Port : 8090
+Windows Server Name : Tomcat9
+
+Tomcat Administrator Login 
+User Name : admin
+Password: admin
+Roles : manager-gui
+
+설치 경로
+C:\tomcat9
+
+jvm 경로
+C:\jdk11
+
+톰캣 webapp 경로
+C:\tomcat9\webapps\ROOT
+
+
+
+% 톰캣 10.1.20 %
+Server Shutdown Port : 8801
+HTTP/1.1 Connector Port : 8080
+Windows Server Name : Tomcat10
+
+Tomcat Administrator Login 
+User Name : admin
+Password: admin
+Roles : manager-gui
+
+
+
+
+<Intellij>
+
+설치경로
+C:\Program Files\JetBrains\IntelliJ IDEA 2023.3.4
+
+HTTP/1.1 Connector Port : 8090
+
+웹 프로젝트 만들 때 꼭 메이븐 적용해야 톰캣 서버 사용 가능함.
+
+톰캣 로그 한글 깨질 때
+1. tomcat - edit configuration - server
+아래 코드를 그대로 VM options에 입력
+-Dfile.encoding=UTF-8 -Duser.language=en -Duser.region=en 
+
+2. 메뉴 - help - Edit custom VM options - 
+아래 두 줄 입력 후 재시작.
+-Dfile.encoding=UTF-8
+-Dconsole.encoding=UTF-8
+
+인텔리제이에서 jsp 파일(.jsp)이 컴파일 된 클래스 파일이 있는 경로
+C:\Users\Administrator\AppData\Local\JetBrains\IntelliJIdea2023.3\tomcat\해당 폴더\work\Catalina\localhost\pro_05\org\apache\jsp
+C:\Users\Administrator\AppData\Local\JetBrains\IntelliJIdea2023.3\tomcat\ee3d4d80-2e6e-43d1-b041-5aae54a80e22\work\Catalina\localhost\pro09\org\apache\jsp
+
+IntelliJ IDEA에서 이러한 디렉토리 구조는 설정에 따라 다를 수 있으며, 프로젝트 설정이나 빌드 설정에서 출력 디렉토리를 변경할 수도 있습니다.
+C:\Users\Administrator\IdeaProjects\testprj3\out\artifacts\unnamed
+
+* 클래스 에러 나올때
+메뉴 - file - invalidate cashes - "Invalidate Restart" 클릭!
+
+*인텔리제이에서 깃 뻑났을 때(Invalid VCS root mapping 오류)
+settings-version control-directory mappings에서 제거 후 다시 깃 연동하기.
+
+
+
+<Docker>
+설치 경로
+C:\Program Files\Docker
+
+연습폴더 
+C:\ex\dockerEx
+
+
+버전
+Docker Desktop 4.27.2 (137060)
+Docker Engine : v25.0.3
+Kubernetes : v1.29.1
+
+cmd에서 pull하는법
+
+C:\Users\Administrator>cd C:\ex\dockerEx
+
+(centos에서 할 때는 "systemctl start docker" 입력한 뒤에 아래 내용 치기)
+
+C:\ex\dockerEx>docker pull "원하는 프로그램 명"
+
+cmd에서 이미지 실행하는 방법
+docker run 이미지명
+
+cmd에서 이미지 삭제하는 방법
+docker image rm 이미지명
+
+컨테이너 멈추는 방법
+C:\ex\dockerEx>docker stop mywebserver
+
+컨테이너 삭제
+C:\ex\dockerEx>docker rm mywebserver
+
+
+C:\ex\dockerEx>docker run --name mywebserver -d -p 8080:80 httpd
+mywebserver라는 컨테이너 이름으로 백그라운드(daemon)에서 포트번호 8080으로, 컨테이너에서는 80으로 httpd 프로그램을 돌리겠다!
+이렇게 하면 도커에 컨테이너도 자동으로 생김.
+(centos에서는 docker run --name mywebserver -d -p 8080:80 1d668e06f1e5( docker images라고 친 후 나오는 IMAGE ID)
+
+C:\Users\Administrator>docker run --name mywebserver -d -p 8080:80 -v c:\ex\html3:/usr/local/apache2/htdocs httpd
+리눅스 경로까지 정해준 것. 윈도우에서 작업한 것을 리눅스에 공유, 서버에 바로 반영된다. 
+
+이러면 지금 백그라운드에 리눅스 돌아가고 있음. cmd에서 사용할 수 있음.
+C:\ex\dockerEx>docker exec -it mywebserver /bin/bash (윈도우에서 리눅스로 접속함.)
+root@44b56100a189:/usr/local/apache2# ls
+bin  build  cgi-bin  conf  error  htdocs  icons  include  logs  modules
+root@44b56100a189:/usr/local/apache2# cd htdocs
+root@44b56100a189:/usr/local/apache2/htdocs# ls
+index.html
+root@44b56100a189:/usr/local/apache2/htdocs# cat index.html
+<html><body><h1>It works!</h1></body></html>
+root@44b56100a189:/usr/local/apache2/htdocs#
+
+
+네트워크 만들기
+C:\Users\Administrator>docker network create 네트워크명
+네트워크 리스트 보기
+C:\Users\Administrator>docker network ls
+
+deamon interactive tty -> dit로 줄여서 씀.
+
+* 워드프레스 +  mysql 컨테이너로 블로그 만들기
+참고자료
+https://docs.google.com/spreadsheets/d/12kjil_3j7xh4lCNLJrrOzy5Fezp9LdaUIjsOmK8PMtk/edit#gid=210877904
+
+0. cmd에서 
+1. 네트워크 먼저 만들어야 한다.
+docker network create wordpress000net1
+
+2. mysql 컨테이너 만든다.
+docker run --name  mysql000ex11 -dit --net=wordpress000net1 -e MYSQL_ROOT_PASSWORD=myrootpass -e MYSQL_DATABASE=wordpress000db -e MYSQL_USER=wordpress000kim -e MYSQL_PASSWORD=kimpass mysql --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password																									
+
+// 여기까지 하고 새로운 cmd 창에서
+docker exec -it mysql000ex11 /bin/bash
+입력해서 bash-4.4# 뜨는지 확인.
+mysql 접속
+ mysql -u root -p wordpress000db; 입력
+비밀번호 입력 : myrootpass;
+
+use wordpress000db;
+ create table sample( id int(8), pw char(8) );
+show tables;
+insert sample(id, pw) values(1, '1111');
+select * from sample;
+
+결과!!
++------+------+
+| id   | pw   |
++------+------+
+|    1 | 1111 |
++------+------+
+1 row in set (0.00 sec)
+
+
+3. 워드프레스 컨테이너 만든다.
+기존 cmd에서
+docker run --name  wordpress000ex12 -dit --net=wordpress000net1 -p 8085:80 -e WORDPRESS_DB_HOST=mysql000ex11 -e WORDPRESS_DB_NAME=wordpress000db  -e WORDPRESS_DB_USER=wordpress000kim -e WORDPRESS_DB_PASSWORD=kimpass wordpress
+
+완료되면 
+http://localhost:8085/wp-admin/install.php?step=1
+아이디
+dndbs91@gmail.com
+비번
+aQLUTA@x47*n4VuAGh
+
+아까 새로 만든 cmd에서(mysql)
+use wordpress000db;
+show tables;
+결과!!!!
++--------------------------+
+| Tables_in_wordpress000db |
++--------------------------+
+| sample                   |
+| wp_commentmeta           |
+| wp_comments              |
+| wp_links                 |
+| wp_options               |
+| wp_postmeta              |
+| wp_posts                 |
+| wp_term_relationships    |
+| wp_term_taxonomy         |
+| wp_termmeta              |
+| wp_terms                 |
+| wp_usermeta              |
+| wp_users                 |
++--------------------------+
+13 rows in set (0.00 sec)
+
+
+Chrome
+쿠키 경로 
+C:\Users\Administrator\AppData\Local\Google\Chrome\User Data\Default\Cache\Cache_Data
+
+
+MicroSoft edge
+쿠키 경로
+C:\Users\Administrator\AppData\Local\Microsoft\Edge\User Data\Default\Network
+
+
+
+
+
+<MySQL>
+
+MySQL Community Server 8.3.0 Innovation
+포트 : 3306
+x protocol port 33060
+root password : 1234
+
+data directory
+C:\ProgramData\MySQL\MySQL Server 8.3\
+
+
+
+
+<MySQL Workbench 8.0.36>
+C:\Program Files\MySQL\MySQL Workbench 8.0 CE\
+
+워크벤치 아이콘 경로
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL
+
+
+* 워크벤치와 서버의 버전이 맞지 않을 때 워크벤치 실행법
+cmd 관리자권한으로 실행
+
+chcp 437 입력
+Active code page: 437
+
+C:\Users\Administrator>cd C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL
+
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL>dir
+ Volume in drive C has no label.
+ Volume Serial Number is 52B6-33C5
+
+ Directory of C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL
+
+2024-02-27  오후 04:35    <DIR>          .
+2024-02-27  오후 04:35    <DIR>          ..
+2024-02-27  오후 04:27    <DIR>          MySQL Server 8.3
+2024-02-27  오후 04:35             2,236 MySQL Workbench 8.0 CE.lnk
+               1 File(s)          2,236 bytes
+               3 Dir(s)  223,064,649,728 bytes free
+
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL>"MySQL Workbench 8.0 CE.lnk"
+
+C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL>
+
+
+
+
+<JQuery cdn>
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+
+
+
+<myBatis>
+버전 : mybatis-3.5.14
+https://github.com/mybatis/mybatis-3/releases/tag/mybatis-3.5.14
+mybatis-3.5.14.zip 파일 다운로드 - mybatis-3.5.14.jar 파일을 web-inf의 lib에 집어넣기.
+
+
+
+안드로이드 스튜디오
+버전 : android-studio-2023.2.1.24-windows
+설치 경로 : C:\Program Files\Android\Android Studio
+SDK 경로(플랫폼 버전 34) : C:\Users\Administrator\AppData\Local\Android\Sdk
+작업경로 : C:\Users\Administrator\AndroidStudioProjects\
+
+
+
+
+gradle에서 jstl 사용 시??
+implementation 'jakarta.servlet:jakarta.servlet-api'
+implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
+implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' 
+
+  //implementation 'javax.servlet:jstl' //스프링부트 3.0 미만
+   implementation 'jakarta.servlet:jakarta.servlet-api' //스프링부트 3.0 이상
+   implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' //스프링부트 3.0 이상
+   implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl' //스프링부트 3.0 이상
+
+
+python(깔고 바로 제거함)
+버전 : python-3.12.3-amd64
+설치 경로 : C:\Users\Administrator\AppData\Local\Programs\Python\Python312
+
+
+aws 키
+경로 : C:\ex\myawskey
+
+
+PyCharm 
+버전 PyCharm Community Edition 2024.1.1
+설치 경로 C:\Program Files\JetBrains\PyCharm Community Edition 2024.1.1
+
+
+
+
+aws
+DB 인스턴스 식별자 : board-database1
+마스터 사용자 이름 : board
+마스터 암호 : 12341234
+엔드포인트 : 
+board-database1.ch8eesimijln.ap-northeast-2.rds.amazonaws.com
+
+
+
+anaconda에서 가상환경 실행하기
+(base) C:\Users\Administrator>cd C:\pythonWebProject\venv\Scripts
+(base) C:\pythonWebProject\venv\Scripts>activate
+(venv) (base) C:\pythonWebProject\venv\Scripts>cd ..
+(venv) (base) C:\pythonWebProject\venv>jupyter notebook
+
+
+ubuntu
+
+버전 : ubuntu-22.04.4-live-server-amd64
+shangcom
+12341234

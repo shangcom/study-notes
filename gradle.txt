@@ -1,0 +1,163 @@
+** 인텔리제이에서 gradle 버전 변경
+터미널 열기 (alt + f12) 
+-> gradlew wrapper --gradle -version x.xx.x
+입력 후 엔터
+
+
+
+** build.gradle에 직접 libs 디렉토리에 추가한 jar 의존성 추가하는 방법
+implementation files('libs/jar 파일명')
+
+** cmd에서 gradle 실행 시 문자 깨질 때
+build.gradle과 같은 경로에 gradle.properties 파일 생성
+org.gradle.jvmargs=-Dfile.encoding=UTF-8
+입력(띄어쓰기 하면 안됨)
+
+
+** 소스 코드 다운로드
+View > Tool Windows > Gradle을 클릭하여 Gradle 탭을 엽니다.
+Gradle 탭에서 프로젝트의 Dependencies 목록을 클릭합니다.
+Download Sources를 선택하여 Gradle 의존성의 소스 코드를 다운로드합니다.
+
+
+* dependencies {} 블록(의존성 블록) : 
+프로젝트에서 필요한 외부 라이브러리와 모듈을 선언. 각 라이브러리는 특정 구성(configuration)에 따라 사용되며,
+이러한 구성은 의존성이 빌드 과정의 어느 시점에서 필요한지를 정의.
+의존성 종류에 따라 implementation, compileOnly, testImplementation 등의 의존성 구성(Configuration) 키워드를 사용하여 의존성을 추가함.
+-Configuration의 종류
+implementation: 런타임 및 컴파일 시 모두 필요한 경우 사용. 주로 애플리케이션의 주요 기능에 필요한 라이브러리를 포함.
+compileOnly: 컴파일 시에만 필요한 경우 사용. 예를 들어, Lombok과 같은 애노테이션 프로세서.
+annotationProcessor: 애노테이션을 처리하는 데 필요한 경우 사용. Lombok 애노테이션 프로세서.
+testImplementation: 테스트 컴파일과 런타임 시에 필요한 경우 사용. JUnit이나 Mockito와 같은 테스트 라이브러리.
+testCompileOnly: 테스트 컴파일 시에만 필요한 경우 사용. 테스트 코드 작성 시 필요한 Lombok 라이브러리.
+testAnnotationProcessor: 테스트 애노테이션을 처리하는 데 필요한 경우 사용. 테스트 시 Lombok 애노테이션 프로세서.
+runtimeOnly: 런타임 시에만 필요한 경우 사용. 데이터베이스 드라이버 등.
+providedCompile: 컴파일 시에만 필요하고, 배포 시에는 제외되는 경우 사용. 서블릿 API와 같은 라이브러리.
+}
+
+* configurations {} 블록 : 
+configurations 블록에서는 의존성 구성(configuration)을 정의하고, 이를 확장하거나 다른 구성을 상속받도록 설정.
+이는 특정 라이브러리가 어떻게 사용되고 빌드 과정에서 어떤 역할을 하는지를 세밀하게 제어할 수 있게 함.
+configurations{
+	compileOnly{
+		extendsFrom annotationProcessor
+	}
+}
+이렇게 하면, compileOnly 구성은 annotationProcessor 구성을 상속한다. 따라서 dependencies에서 
+compileOnly ~~lombok
+annotationProcessor ~~lombok
+이렇게 두 번 쓸 필요 없이, compileOnly만 써주면 annotationProessor까지 함께 적용된다. 
+
+
+
+** 컴파일과 외부 라이브러리의 관계
+자바 애플리케이션의 경우, 컴파일과 런타임은 서로 다른 단계입니다.
+
+컴파일은 자바 소스 코드(.java 파일)를 **바이트코드(.class 파일)**로 변환하는 과정입니다. 컴파일러(javac)가 이 작업을 수행하며, 이 과정에서 애플리케이션이 의존하는 외부 라이브러리의 클래스와 메서드에 대한 참조를 확인합니다.
+외부 라이브러리의 코드 자체는 이미 컴파일된 상태로, 보통 .jar 파일로 제공됩니다. 컴파일러는 .jar 파일을 컴파일 과정에서 사용하지만, 외부 라이브러리 자체를 다시 컴파일하지는 않습니다.
+2. 의존성 설정의 차이에 따른 동작
+의존성의 설정 방식에 따라 컴파일과 런타임 시의 처리가 달라집니다:
+
+implementation으로 설정된 라이브러리: 컴파일러가 소스 코드에서 이 라이브러리의 API를 참조할 때 필요한 .jar 파일을 참조합니다. 컴파일러는 이 라이브러리의 클래스가 존재하는지, 메서드 시그니처가 올바른지 확인합니다.
+runtimeOnly로 설정된 라이브러리: 컴파일 과정에서는 이 라이브러리가 필요하지 않습니다. 즉, 애플리케이션의 소스 코드가 이 라이브러리를 직접 호출하거나 참조하지 않기 때문입니다. 이 라이브러리는 애플리케이션이 실행될 때 필요하며, 런타임 시점에 클래스 로더가 이 라이브러리를 로드하여 사용할 수 있도록 합니다.
+3. 앱 실행 시의 과정
+컴파일 단계:
+
+소스 코드(.java 파일)가 컴파일되어 바이트코드(.class 파일)로 변환됩니다.
+컴파일 시, implementation 의존성으로 설정된 라이브러리의 .jar 파일이 참조되어 컴파일 오류가 있는지 검사합니다.
+runtimeOnly로 설정된 라이브러리는 이 단계에서 필요하지 않습니다.
+실행 단계 (런타임):
+
+애플리케이션이 실행될 때, 런타임 환경(JVM)이 runtimeOnly로 설정된 라이브러리와 함께 애플리케이션을 로드합니다.
+이때 애플리케이션이 동적으로 JDBC 드라이버와 같은 라이브러리를 필요로 할 경우, 클래스 로더가 runtimeOnly로 설정된 .jar 파일을 로드하여 사용할 수 있도록 합니다.
+요약
+컴파일러는 외부 라이브러리를 다시 컴파일하지 않고, 이미 컴파일된 .jar 파일을 참조하여 컴파일 오류가 없는지 검사합니다.
+runtimeOnly로 설정된 라이브러리는 컴파일 시에는 필요하지 않지만, 애플리케이션 실행 시에 클래스 로더가 로드하여 사용할 수 있습니다.
+
+
+
+** gradlew clean :  빌드 삭제
+gradlew buildJar : Jar 빌드 생성
+
+** gradlew buildJar
+build.gradle 파일에 buildJar 같은 커스텀 Task가 정의되어 있을 경우, 이를 기준으로 빌드가 수행됩니다.
+예를 들어, buildJar라는 Task가 정의되어 있다면, jar 태스크를 확장하거나 특정 파일을 포함하는 등 커스텀 작업을 수행할 수 있습니다.
+
+task buildJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'hello.embed.EmbedTomcatSpringMain'
+    }
+    with jar
+}
+attributes 'Main-Class' : JAR 파일이 실행될 때 JVM이 가장 먼저 실행해야 하는 클래스를 지정
+
+
+
+** gradle 4.xx 버전
+
+Gradle 4.x에서 Groovy DSL이 주로 사용되었습니다.
+apply plugin 방식이 표준이었습니다.
+
+buildscript {
+    ext {
+        springBootVersion = '2.1.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.jojoldu.book'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+
+
+2023년 이후:
+Gradle 5.x부터 plugins 블록으로 플러그인 선언이 권장되었습니다.
+의존성 관리 키워드도 변경되었습니다:
+compile → implementation
+testCompile → testImplementation
+
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'org.springframework.boot' version '2.1.9.RELEASE'
+    id 'io.spring.dependency-management'
+}
+
+group = 'com.jojoldu.book'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+

@@ -1,0 +1,152 @@
+** CMD에서 파일 만들기
+echo 입력할 내용 > 생성할 파일 이름
+echo 추가할 내용 >> 생성한 파일 이름
+
+
+
+** OS 환경 변수 확인
+cmd - 'set' 입력
+
+
+** 톰캣
+버전 : apache-tomcat-10.1.31
+설치경로
+C:\apache-tomcat-10.1.31
+
++
+버전9 설치 경로
+C:\tomcat9
+
+
+
+** sqldeveloper
+설치경로
+F:\tools\sqldeveloper-23.1.1.345.2114-x64\sqldeveloper
+
+
+
+** 인텔리제이
+학생 코드
+License ID : ZIID8PDX5X
+버전 : ideaIU-2023.3.5
+워크스페이스 경로
+C:\Users\dndbs\IdeaProjects
+
+
+
+** Oracle Database 11g Express Edition 
+
+설치경로
+C:\oraclexe
+
+cmd -> sqlplus -> 유저네임 system / 비밀번호 1234
+create user scott identified by 12324;
+grant resource, connect to scott;
+
+컴퓨터 관리 -> 서비스 및 응용 프로그램 -> 서비스 -> OracleServiceXE, OracleXTNSListner 상태 '수동'으로 변경(컴퓨터 부팅 시 자동시작 방지)
+단축키: Win + R → services.msc → Enter -> OracleServiceXE -> 속성 -> 수동
+수동 시작 : cmd -> net start OracleServiceXE
+수동 종료 : cmd -> net stop OracleServiceXE
+
+버전
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+호스트 이름 (오라클이 설치된 주소) : localhost (설치 위치가 로컬 pc이므로 localhost임) 
+포트 : 1521
+SID(오라클 실행 시 인스턴스 명) : xe (oracle 11g express 버전은 xe가 기본값임)
+system / 1234
+scott / 1234
+
+비밀번호 여러번 틀려서 계정 잠겼을 경우?
+cmd 열고 
+sql 사용자계정아이디 as sysdba
+alter user 잠긴계정아이디 account unlock;
+비밀번호 변경(선택사항)
+alter user 잠긴계정아이디 by new_password;
+
+* Oracle Listener가 8080 포트를 사용 중???
+문제 상황: 포트 8080이 이미 사용 중이어서 8080 포트를 사용하는 Spring 애플리케이션을 실행할 수 없었음.
+확인 작업: netstat 명령어와 작업 관리자를 통해 포트 8080을 사용 중인 프로세스를 확인함.
+해결 방법: 작업 관리자에서 Oracle 프로그램(TNSLSNR.EXE)을 종료함.
+결과: Spring 애플리케이션이 포트 8080을 사용하여 성공적으로 실행됨.
+-> 임시 방편임. 왜 이런거 발생하는 지 잘 모르니까 나중에 채워넣기.
+
+오라클 드라이버 위치 (ojdbc)
+C:\oraclexe\app\oracle\product\11.2.0\server\jdbc\lib
+
+
+** Git
+버전
+git version 2.44.0.windows.1
+설치경로
+C:\Program Files\Git
+
+** sourcetree
+버전
+SourceTree 3.4.17
+경로
+C:\Users\dndbs\AppData\Local\SourceTree
+
+
+
+
+mysql
+버전
+mysql-installer-community-8.0.36.0
+data directory
+C:\ProgramData\MySQL\MySQL Server 8.3\
+
+MySQL Workbench 8.0.36
+C:\Program Files\MySQL\MySQL Workbench 8.0 CE\
+
+Windows service name : MySQL
+MySQL Root Account Password : 1234
+MySQL User Account
+shangcom / 1234
+server file permissions : yes (MySQL 인스톨러가 파일 권한을 업데이트함)
+connect to server
+
+언어 오류로 실행 되지 않을 때, cmd로 실행파일을 직접 동작시킨다. 아래를 순서대로 입력.
+chcp 437 
+cd C:\ProgramData\Microsoft\Windows\Start Menu\Programs\MySQL
+dir
+"MySQL Workbench 8.0 CE.lnk"
+
+
+** MariaDB
+버전 MariaDB Server 10.11.7
+설치 경로 C:\Program Files\MariaDB 10.11
+HeidiSQL 12.6.0.6765
+root 비밀번호 : 12341234
+TCP port : 3307
+
+
+
+** 프로메테우스
+역할 : 메트릭을 수집, 보관하는 DB.
+https://prometheus.io/download/
+버전 prometheus-2.53.3.windows-amd64
+설치 경로 C:\prometheus-2.53.3.windows-amd64
+실행 : cmd -> cd C:\prometheus-2.53.3.windows-amd64 -> prometheus 입력 -> 브라우저 localhost:9090
+
+
+**그라파나
+역할 : 프로메테우스가 수집한 메트릭을 가공하여 보기 좋게 표현. 즉 데이터 조회는 프로메테우스를 통해서 하고, 그라파나는 그냥 보여주기 역할.
+https://grafana.com/grafana/download
+버전 grafana-enterprise-11.3.0.windows-amd64
+설치 경로 C:\Program Files\GrafanaLabs\grafana
+실행 : C:\Program Files\GrafanaLabs\grafana\bin\grafana-server 실행 -> 브라우저 localhost:3000
+id : admin
+pw : admin
+
+
+** Antimalware Service Executable  CPU 점유율 낮추기
+
+win + R -> taskschd.msc -> 작업 스케줄러 라이브러리 -> Microsoft -> windows -> Windows Defender -> Windows Defender Scheduled Scan 
+-> 일반 -> '가장 높은 수준의 권한으로 실행' 언체크
+-> 조건 -> 모든 항목 언체크
+
+win + I -> 업데이트 및 보안 -> Windows 보안 -> 제외 사항 추가 -> 프로세스 제외 -> MsMpEng.exe 추가
+
+https://m.blog.naver.com/ayukawah/222784487260
+https://blog.naver.com/pooh4880/222059912674

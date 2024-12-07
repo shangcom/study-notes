@@ -1,0 +1,77 @@
+@RequestBody 가 컨트롤러 메서드의 매개변수에 붙은 경우
+    public Object addItem(@Validated @RequestBody ItemSaveForm form, BindingResult bindingResult) {
+...
+}
+요청 바디에서 JSON 데이터를 가져와서, ItemSaveForm 클래스의 필드에 바인딩해서 객체 만든 뒤 매개변수로 사용할 수 있게 해준다.
+
+
+** ObjectMapper : Jackson 라이브러리의 클래스. 주로 JSON 데이터를 Java 객체로 변환하거나 그 반대로 변환하는 데 사용.
+
+* 클라이언트의 json 메시지를 서버에서 받을 때
+messageBody의 jason 문자열을 inputStream으로 받고,
+StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8) 을 통해 파싱한 뒤,
+ObjectMapper으로 java 객체로 변환함.
+
+-왜 utf-8?
+JSON의 기본 인코딩: JSON은 기본적으로 UTF-8 인코딩을 사용하도록 규정되어 있음
+브라우저의 동작: 브라우저는 JSON 데이터를 포함한 HTTP 요청을 보낼 때, 자동으로 UTF-8로 인코딩.
+서버 처리: 서버는 클라이언트로부터 받은 바이트 데이터를 UTF-8로 디코딩하여 문자열로 변환한 후, 이를 처리함.
+
+* 서버에서 json 메시지를 생성하여 클라이언트에 보낼 때
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        HelloData helloData = new HelloData();
+        helloData.setUsername("kim");
+        helloData.setAge(20);
+
+        String result = objectMapper.writeValueAsString(helloData);
+        response.getWriter().write(result);
+
+ObjectMapper 사용해 자바 객체를 json 문자열로 변환해서 보냄.
+
+
+
+**JSON 문법 요약
+
+*기본 구조
+
+객체(Object): {}로 감싸진 키-값 쌍의 집합
+배열(Array): []로 감싸진 값의 목록
+객체 (Object)
+
+형식: { "key": "value", "key2": value2 }
+키(Key): 문자열, 큰따옴표 " "로 감쌈
+값(Value): 문자열, 숫자, 객체, 배열, 부울, null 등
+배열 (Array)
+
+형식: [value1, value2, value3]
+값들은 쉼표 ,로 구분
+배열 내부에는 객체, 배열, 다른 JSON 데이터 유형 포함 가능
+데이터 유형 (Value Types)
+
+문자열 (String): "example"
+숫자 (Number): 123, 45.67
+객체 (Object): { "key": "value" }
+배열 (Array): ["item1", "item2"]
+부울 (Boolean): true, false
+null: null
+
+
+예시
+
+json
+{
+    "name": "John",
+    "age": 30,
+    "isStudent": false,
+    "courses": ["Math", "Science"],
+    "address": {
+        "city": "New York",
+        "zipcode": "10001"
+    }
+}
+
+기타 주의사항
+공백, 줄 바꿈: 무시됨, 읽기 편하게 사용 가능
+마지막 쉼표: 마지막 요소 뒤 쉼표 사용 금지

@@ -1,0 +1,142 @@
+
+인텔리제이
+학생 코드
+License ID : ZIID8PDX5X
+버전 : ideaIU-2023.3.5
+워크스페이스 경로
+C:\Users\dndbs\IdeaProjects
+
+*Lombok 플러그인 설치 후 반드시 해야하는 설정 : 
+Settings - Build, Execution, Deployment - Compiler - Annotation Processor -> 'Enable annotation processing' 체크!
+이거 해야 인텔리제이가 Lombok 어노테이션 코드 자동 완성 등 기능 사용할 수 있음.
+
+* 리가쳐 적용
+file-settings-editor-font-Enable Ligatures
+
+* 프로젝트 처음 생성 시 세팅
+file-settigs-'gradle' 검색 - build and run using / run testing using : gradle에서 intelliJ IDEA로 변경.
+- 이렇게 했을 때, @PathVariable과 같은 변수명 사용했을 때 java.lang.IllegalArgumentException 발생할 수 있음
+- 해결책 : 
+1. 그냥 IntelliJ로 바꾸지 않고 gradle 사용
+2. build.gradle에 
+tasks.withType(JavaCompile).configureEach {options.compilerArgs << "-parameters"}
+추가하고,
+file-settigs-Build, Execution, Deployment - Java Compiler - Additional command line parameters:에
+""" -parameters """ 적용.
+
+file-settigs-Build, Execution, Deployment - Build Tools - Compiler - Build Project Automatically
+file-settigs-Build, Execution, Deployment - Debugger - HotSwap - Reload classes after compilation 체크
+
+* UTF-8 적용
+spring.messages.encoding=UTF-8
+file-settigs-Editor - File Encodings 전부 UTF-8로 고치기
+Global 및 Project 인코딩이 Default로 되어 있고, Default 인코딩이 UTF-8이면 원칙적으로 문제가 없지만, .properties 파일에 대한 별도의 인코딩 설정이 필요한 경우가 많습니다.
+.properties 파일은 ISO-8859-1로 기본 설정되기 때문에, 개별 파일 인코딩 및 Spring Boot 인코딩 설정을 반드시 UTF-8로 맞춰야 합니다.
+
+*  IDE 설정을 통해 문제를 해결하는 것은 개발 환경에서만 유효하며, 배포 환경에서는 IDE 설정이 적용되지 않기 때문에, 배포된 애플리케이션이 메시지 파일을 올바르게 처리하지 못할 가능성이 있습니다. 따라서 spring.messages.encoding=UTF-8 설정을 application.properties 또는 application.yml 파일에 추가하여 사용하는 것이 가장 확실하고 일관된 방법입니다.
+단, 이 설정만 할 경우, ide에서는 여전히 iso-8859-1로 읽으니까 해당 파일 열어보면 한글 깨져보임.
+
+
+
+
+**
+--add-opens java.base/java.lang=ALL-UNNAMED 옵션을 JVM 옵션으로 추가한 것은 **Java 모듈 시스템(JPMS)**의 모듈 접근 제어를 완화하는 설정입니다. 이 설정은 Java 9 이상에서 새롭게 추가된 모듈 시스템의 접근 제한을 우회하기 위해 사용됩니다.
+스프링 AOP에서 CGLIB 프록시를 사용할 때, 스프링은 내부적으로 리플렉션을 사용하여 원본 클래스의 메서드와 생성자에 접근합니다. 그런데 Java 모듈 시스템이 활성화된 환경(Java 9 이상)에서는 java.lang 패키지의 defineClass 메서드와 같은 리플렉션을 사용할 때 접근 권한이 제한됩니다.
+CGLIB와 스프링 프레임워크는 java.lang.ClassLoader의 defineClass 메서드에 접근하여 프록시를 생성하기 때문에, 이 접근이 제한되면 Illegal reflective access 경고가 발생하거나, 프록시가 정상 작동하지 않게 됩니다.
+--add-opens java.base/java.lang=ALL-UNNAMED 옵션을 추가하면:
+스프링과 CGLIB가 java.lang 패키지에 리플렉션을 통해 자유롭게 접근할 수 있게 됩니다.
+CGLIB 기반 프록시가 정상적으로 작동하며, 접근 제어로 인해 발생했던 오류나 경고가 사라집니다.
+이 JVM 옵션을 통해 Java 모듈 시스템의 접근 제한을 일시적으로 해제하여, CGLIB가 필요한 클래스에 자유롭게 접근할 수 있도록 한 것입니다. @EnableAspectJAutoProxy(proxyTargetClass = true) 없이도 정상 작동하게 된 이유는 CGLIB 접근 제어 문제가 해결되어 JDK 동적 프록시로도 프록시가 생성 가능해졌기 때문입니다.
+
+
+
+
+
+단축키
+
+Alt+Shift : 멀티 커서. 떨어져 있는 내용 동시 선택.
+
+Alt + Shift + F10 : RUN
+
+Ctrl+Shift+Insert : 멀티 커서. 열 선택 모드. Alt+Shift와  비슷.
+
+Alt + Enter : 이클 ctrl space
+- 정적 임포트(Static Import) : 특정 클래스 내의 정적 메서드나 정적 변수를 클래스 이름 없이 직접 사용
+
+Shift+F6 : rename
+Ctrl+F6 : 메서드 시그니쳐(이름, 매개변수, 반환타입, 예외목록 등) 변경
+
+F2 : 오류 있는 곳으로 포커스(커서) 이동
+
+Alt+1 : 도구창으로 포커스 이동
+
+esc : 에디터로 포커스(커서) 이동
+
+Alt+Insert : Generate (생성자, Getter, Setter, Object 클래스 메서드 등). 패키지 위에 두면 파일 생성.
+
+soutv : System.out.println("지정한 value = " + );
+
+Ctrl+C : 커서 위치한 라인 복사 (블럭 필요 없음)
+Ctrl+D : 커서 위치한 라인 복사해서 바로 아랫줄에 생성
+
+Ctrl+O : Override 메서드 목록.
+
+Ctrl+E : 최근 실행한 파일 목록창
+
+Ctrl+B : 필드 위에서 이 단축키를 누르면 커서가 해당 필드의 선언으로 이동. 클래스 이름 위에서 누르면 해당 클래스 파일로 이동.
+	 클래스, 인터페이스, 어노테이션 파일에서 누를 경우 모든 
+usage 리스트 보여줌.
+
+Ctrl+Alt+B : 구현으로 이동
+
+Alt+F7 :  항목이 사용된 모든 곳 표시
+
+Ctrl Ctrl : 항목 실행(run anything)
+
+Ctrl + W / Shift + Ctrl + W : 블럭 영역 확대 / 축소
+
+Shift+Ctrl+Enter : 구문 완성
+
+Ctrl+Alt+Enter : 현재 라인을 아래로 내리고 그 자리에 새로운 빈 줄을 삽입
+
+Shift+Alt+위/아래 : 현재 라인을 한 칸 올리기 / 내리기
+
+Ctrl+Alt+L : 줄맞춤
+
+Ctrl+Alt+V : 클래스, 변수명 자동 입력
+
+Ctrl+Alt+N : Inline 리팩토링. 변수, 메서드, 매개변수를 인라인으로 변경하여 코드 구조를 단순화.
+
+Ctrl+Shift+T : 테스트 클래스 자동 생성
+
+Ctrl+Shift+C : 상수로 변경
+
+Shift+F10 : 현재 파일 실행
+Ctrl+Shift+F10 : 현재 파일 테스트 실행
+
+Ctrl+Alt+O :  java안의 불필요한 import 문을 정리
+
+Ctrl + Alt + M - 드래그한 부분을 외부 메소드로 만들어주는 Extract Method	(메소드 추출)
+
+iter + TAB : 코드에 리스트나 배열이 있을 때 해당 리스트나 배열에 대한 for문 자동 생성.  * iterator(반복자) : 배열이나 그와 유사한 자료구조의 내부요소를 순회하는 객체
+
+Shift+Ctrl+Alt+T : 지정 리팩토링
+
+Shift+Ctrl+Alt+D : JPA 엔티티 시각화
+
+Shift+Ctrl+A : 모든 액션을 검색
+
+Shift+Shift : 전체 검색
+
+Ctrl+R : 찾아바꾸기
+Ctrl+Shift+R : 패키지에서 찾아 바꾸기
+
+
+
+* 경고 표시 : 일단 Syntax로 해뒀음.
+- 방식:
+Warning: 경고는 코드에서 잠재적인 문제나 권장되지 않는 관행을 나타냅니다. 일반적으로 코드에 노란색 밑줄이 그어지며, 에디터 오른쪽에 노란색 경고 마커가 표시됩니다.
+Syntax: 문법 오류는 코드에서 명백한 구문 오류를 나타냅니다. 일반적으로 코드에 빨간색 밑줄이 그어지며, 에디터 오른쪽에 빨간색 오류 마커가 표시됩니다.
+- 검사 수준:
+Warning: 경고는 코드 스타일, 사용되지 않는 변수, 잠재적인 논리 오류 등과 같은 다양한 코드 품질 문제를 검사합니다.
+Syntax: 문법 오류는 올바르지 않은 구문, 잘못된 변수명, 미완성된 코드 블록 등과 같은 명확한 구문 오류를 검사합니다.

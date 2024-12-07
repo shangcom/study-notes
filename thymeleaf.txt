@@ -1,0 +1,311 @@
+thymeleaf 입장에서의 변수란?
+모델에 들어있는 데이터. 즉, 타임리프에서 사용하는 변수는 스프링 컨트롤러가 템플릿에 전달한 모델 데이터를 가리킴.
+
+"..."
+타임리프 표현식 내의 문자열 처리. 문자열과 표현식을 연결할 때 사용.
+"..." 안의 내용은 먼저 표현식으로 처리된 후, 문자열로 인식됨. "..." 내부에 변수를 넣거나 표현식을 사용할 수 있으며, 타임리프는 이를 먼저 해석한 뒤 최종적으로 문자열로 처리.
+'...' + ${expression} 같은 방식으로 문자열과 표현식을 연결해야함.
+띄어쓰기 안됨. '...' 안에 넣어줘야함.
+<span th:text="'Hello ' + ${user.name}"></span>
+여기서 "Hello " + ${user.name}은 먼저 ${user.name}이 해석된 후 문자열로 처리
+결과:  (만약 user.name이 John이라면) "Hello John"
+
+
+'...'
+단순 문자열 리터럴 : 작은따옴표는 타임리프에서 문자열 리터럴을 지정하는 데 사용.
+작은따옴표를 사용하지 않으면, 타임리프는 해당 내용을 변수나 표현식으로 해석 시도.
+onclick="location.href='editForm.html'" th:onclick="|location.href='@{/basic/items/{itemId}/edit(itemId=${item.id})}'|" type="button">상품 수정</button>
+이 경우,
+location.href='editForm.html'
+이것 자체가 자바스크립트 문법임.
+타임리프가 해석을 시도하지 않도록 전체를 하나의 문자열로 인식하도록 하고, 그 중 'editForm.html'에서 '...' 안의 editForm.html을 @{/basic/items/{itemId}/edit(itemId=${item.id})}으로 대체하는 것이다.
+따라서 여기서 작은 따옴표는 타임리프 문법의 문자열 리터럴이 아니라. 자바스크립트 문법이다.
+
+th:inline
+인라인(inline) 표현식 [[...]], [(...)]
+코드나 데이터를 그 자체로 삽입하여 사용하는 방식.
+타임리프(Thymeleaf)에서 인라인은 표현식이나 변수를 HTML 템플릿 안에서 직접적으로 사용하는 것을 의미.
+
+[[...]]
+HTML 이스케이핑을 수행하여 데이터를 안전하게 출력
+th:text와 동일한 역할을 하며, HTML 태그를 텍스트로만 보여줄 때.
+HTML 이스케이핑을 수행하므로 텍스트 데이터를 안전하게 출력할 때 사용. HTML 태그를 텍스트로만 출력하고, 사용자 입력을 포함할 때 보안상의 위험을 방지.
+
+[(...)]
+이스케이핑 없이 데이터를 그대로 출력
+th:utext와 동일한 역할을 하며, 주로 JavaScript 코드나 HTML 태그를 그대로 해석하고자 할 때 사용.
+HTML 이스케이핑을 수행하지 않으므로 HTML 태그나 JavaScript 코드를 직접 렌더링해야 할 때 사용. 특히 JavaScript 인라이닝에서 변수가 올바르게 해석되도록 하기 위해 사용
+
+th:inline="text": 텍스트 인라이닝을 활성화하며, HTML 특수 문자를 이스케이핑하여 안전하게 출력. 
+HTML 태그 본문에서는 인라인 표현식을 사용할 때 별도로 th:inline="text"를 명시할 필요가 없음(기본 설정)
+[[...]]: 타임리프 표현식은 해석되고, HTML 태그는 이스케이핑되어 비활성화된 상태로 출력됨.
+ex) <p>[[${msg}]]</p>  ->  msg = "Hello <b>World</b>"  ->  Hello &lt;b&gt;World&lt;/b&gt; 출력. <b> 태그가 이스케이핑되어 텍스트로 표시됩니다.
+[()]: 타임리프 표현식과 HTML 태그 모두 해석되어 활성화.
+ex) <p>[(${msg})]</p>  ->  msg= "Hello <b>World</b>"  ->  Hello <b>World</b> 출력. World가 굵은 글씨로 나온다.
+
+th:inline="javascript": JavaScript 인라이닝을 활성화.
+th:inline="none": 인라이닝을 비활성화하여 [[...]]나 [()] 표현식을 해석하지 않고 그대로 출력
+th:inline="dart": Dart 코드에서의 인라이닝
+
+타임리프 템플릿에서 인라인 표현식의 처리를 제어. 기본적으로는 HTML이나 자바스크립트에서 인라인 처리가 활성화되지만, 필요에 따라 none, text, javascript 등으로 지정하여 처리 방식을 변경할 수 있음.
+인라인 모드에서 타임리프가 해석하는 경우 : <span th:inline="text">[[${user.username}]]</span>
+타임리프가 해석하지 않는 경우 (그대로 출력됨) : <span>[[${user.username}]]</span>
+
+<자바스크립트>
+th:inline="javascript"
+만약 javascript 인라인을 사용하지 않고 아래 코드를 자바스크립트에 넣으면?
+var username = [[${user.username}]];
+var username = 설우윤
+이렇게 됨. 문자열인데 큰따옴표"..." 없음.
+반면 인라인에 넣으면 알아서 큰따옴표 붙여줌.
+
+var username2 = /*[[${user.username}]]*/ "test username";
+만약 javascript 인라인을 사용하지 않고 아래 코드를 자바스크립트에 넣으면?
+    var username2 = /*설우윤*/ "test username";
+반면 인라인 처리했을 경우,
+    var username2 = "userA";
+이렇게 자바스크립트 주석 부분을 타임리프가 처리하면서, th:text가 태그 본문들 대체하는 것처럼 주석 부분을 랜더링하여 "test username"대시 집어넣음.
+
+객체 집어넣을 경우
+    var user = [[${user}]];
+인라인 사용 안했다면?
+var user = BasicController.User(username=설우윤, age=10);
+인라인 사용하면?
+var user = {"username":"userA","age":10};
+이렇게 json 객체로 변호나하여 넣어준다.
+
+
+${...}
+변수 표현식
+데이터 바인딩. 모델 값 참조. HTML 요소 안에서 서버에서 전달된 데이터(모델 속성)를 사용할 때.
+th:text나 th:if 같은 타임리프 속성 안에서 사용되고, 해당 속성에서만 해석됨. HTML 안에 직접 사용하면 타임리프가 해석하지 않는다.
+<span>${...}</span> 이렇게 써도, HTML 안에 직접 사용한 것이기 때문에 클라이언트 화면에 ${...} 문자가 그대로 출력된다.
+
+
+
+** @{...}
+URL 링크 표현식.
+URL 바인딩. 경로 처리. URL 동적 생성. 컨텍스트 경로 자동 포함.
+
+1. 동적 URL 생성:
+@{/경로/{변수}(변수=${값})}
+
+<a th:href="@{/articles/{id}(id=${item.id})}">글 보기</a>
+예: id가 5인 경우 /articles/5로 변환. 
+
+<a th:href="@{/articles/{category}/{id}(category=${article.category}, id=${article.id})}">글 보기</a>
+예: category="tech", id=5인 경우 /articles/tech/5로 변환.
+
+쿼리 파라미터: 
+@{/경로(파라미터=${값})}
+
+단일 쿼리 파라미터
+<a th:href="@{/articles(page=${page})}">다음 페이지</a>
+예: page=1이면 /articles?page=1로 변환.
+
+다중 쿼리 파라미터
+<a th:href="@{/articles(page=${page}, size=${size})}">검색</a>
+예: page=1, size=10이면 /articles?page=1&size=10로 변환.
+
+
+
+{...}
+Path variable 경로 변수 표현식 : URL의 가변 부분을 동적으로 처리하는 표현식. 주로 자바 객체의 필드나 파라미터 값을 URL에 전달하는 경우에 활용.
+쿼리 파라미터도 함께 생성 가능하다.
+th:href="@/basic/items/{itemId}(itemId=${item.id}, query='test')"  ->  생성된 URL(item.id가 1인 경우) : /1?query=test
+<td><a href="item.html" th:href="@{/basic/items/{itemId}(itemId=${item.id})}"
+{...} 경로 변수(Path Variable). 여러 개의 경로 변수가 있는 경우에도 각각의 변수를 쉽게 대입할 수 있음.
+th:href="@{/basic/items/${item.id}}" 이렇게 쓴다면?
+URL 경로의 일부를 동적으로 바꾸는 경로 변수{...} 로 사용해야 하는데, 표현식 ${...} 으로 사용되면 타임리프는 이 값을 경로 변수로 인식하지 않고, 문자열처럼 처리. 
+따라서 실제 URL에 %7Bitem.id%7D라는 인코딩된 문자열이 들어가게 됨.
+
+|...|
+문자열 템플릿.
+변수를 포함한 문자열을 간결하게 표현하는데 사용.  '...' 없이 문자열을 쓰고, + 연산 없이 변수를 문자열에 삽입하는 방식이므로 더 직관적.
+"'Hello, ' + ${user.name}"
+-> "'Hello, ${user.name}'" 만약 이렇게 쓰면 내부 표현식 해석되지 않고 그대로 출력됨.
+|...|를 적용하면
+-> "|Hello, ${user.name}|" 이렇게, '...' 문자열 리터럴 사용하지 않고, 띄어쓰기도 바로 적용 가능하고, +도 사용하지 않고 편하게 작성 가능함.
+
+
+<span th:text="'Welcome to our application, ' + ${user.name} + '!'">
+|...| 사용해서 수정하면
+<span th:text="|Welcome to our application, ${user.name}!|">
+특히, URL 경로는 |...| 구문을 사용하는 것이 좋다.
+
+
+th:href="@{|/basic/items/${item.id}|}" 구문은 두 단계를 거쳐 처리됩니다:
+1. ${item.id} 처리: 
+먼저 타임리프는 ${item.id} 표현식을 처리하여 item.id의 실제 값을 얻습니다. 예를 들어 item.id가 1이라면 ${item.id}는 1로 대체됩니다.
+2. |...| 구문 처리:
+그 후, |/basic/items/1| 구문이 완성된 문자열로 인식됩니다. 이 문자열을 타임리프의 @{} 구문이 처리하여 최종적으로 URL 경로로 만들어줍니다.
+즉, @{}가 완성된 문자열을 URL로 처리하여 /basic/items/1 같은 결과를 생성합니다.
+th:href="@/basic/items/{itemId}(itemId=${item.id})" 이것과 결과는 같음.
+
+th:text="${...}"
+내용 변경.
+HTML 태그 본문의 값을 th:text의 값으로 변경.
+
+th:each="item : ${items}"
+반복 출력.
+
+${param.******}
+요청 파라미터 접근 : param은 HTTP 요청 파라미터를 매핑하는 타임리프의 내장 객체.
+URL이 http://localhost:8080/items?status=success인 경우, 타임리프 템플릿에서 ${param.status}를 사용하면 success 값을 얻을 수 있음.
+자동 매핑: 이 기능은 스프링 MVC와 타임리프의 통합으로 인해 자동으로 제공됩니다. 즉, 별도의 추가 코드나 설정 없이도 사용할 수 있습니다.
+
+th:with
+지역 변수 선언. 만들어진 변수는 선언한 태그 안에서 사용 가능.
+
+
+HTTP 요청 파라미터 접근: param
+예) ${param.paramData} 
+
+HTTP 세션 접근: session
+예) ${session.sessionData} 
+
+스프링 빈 접근: @
+예) ${@helloBean.hello('Spring!')}
+
+<연산>
+gt : "greater than(>)
+lt : "less than(<)
+ge : "greater than or equal to" (>=)
+
+**_** (언더스코어)
+No-Operation. 엘비스 연산자와 함께 사용하며, 데이터가 없거나 특정 조건을 처리할 때 사용되며, 템플릿의 동작을 무시하도록 하는 효과.
+<p th:text="${userName}?: _">기본 사용자</p>
+설명: userName 변수가 null이거나 비어 있으면, _로 인해 타임리프가 렌더링을 하지 않고 HTML 본문에 작성된 **"기본 사용자"**가 그대로 출력됨.
+userName에 값이 있으면: 해당 값이 출력되고, "기본 사용자"는 대체됨.
+_: No-Operation을 활용하면, HTML 본문을 대체하지 않고 유지하는 방식으로 사용 가능.
+
+<HTML 엔티티>
+HTML은 특수 문자를 직접 사용할 때 문제가 생길 수 있으므로, 이런 특수 문자를 안전하게 출력하기 위해 엔티티로 변환.
+
+&*****;
+'&' 으로 시작해서 ';' 로 끝나는 형태로 작성.
+
+&gt; -> >(greater than)
+&lt; -> <(less than)
+&amp -> &(ampersand. and 기호 이름.)
+
+
+
+<반복>
+each
+th:each="user, userStat: ${users}"
+th:each에서 두번째 변수는 '반복 상태 객체'.
+현재 반복의 상태 추적하는 기능 제공.
+반복 상태 객체 생략하면, 변수명 + Stat으로 자동 생성됨.
+
+예를 들어, th:each="user : ${users}"로 반복할 때, 자동으로 userStat이라는 상태 객체가 생성.
+index: 0부터 시작하는 현재 인덱스
+count: 1부터 시작하는 현재 카운트
+size: 전체 리스트의 크기
+even, odd: 현재 반복이 짝수인지 홀수인지 여부
+first, last: 첫 번째 또는 마지막 항목인지 여부
+current: 현재 객체
+
+
+
+<fragment, insert, replace>
+
+th:fragment
+프래그먼트를 정의하여 다른 곳에서 참조 가능하게 함..
+<footer th:fragment="footer">
+    This is the footer content.
+</footer>
+
+th:insert
+프래그먼트를 삽입. 호출하는 태그는 유지되고, 그 안에 프래그먼트가 추가.
+<div th:insert="~{template/fragment :: footer}"></div>
+결과 : <div><footer>This is the footer content.</footer></div>
+
+th:replace
+프래그먼트를 호출한 태그를 교체
+<div th:replace="~{template/fragment :: footer}"></div>
+결과 : <footer>This is the footer content.</footer>
+
+파라미터가 있는 fragment
+<footer th:fragment="footerWithParams(param1, param2)">
+    <p>First param: <span th:text="${param1}">Default1</span></p>
+    <p>Second param: <span th:text="${param2}">Default2</span></p>
+</footer>
+
+파라미터 전달
+<div th:replace="~{template/fragment :: footerWithParams('Footer Title', 'Footer Text')}"></div>
+결과
+   <p><span>First param: Footer Title</span></p>
+   <p><span>Second param: Footer Text</span></p>
+
+
+
+~{::...}
+현재 템플릿에서 특정 태그를 참조할 때 사용. 따라서 **~{::title}**은 현재 템플릿 내의 <title> 태그를 가리켜, 그 태그의 본문을 다른 프래그먼트에 파라미터로 전달할 수 있게 함.
+이 구문은 타임리프가 프래그먼트를 동적으로 처리할 때 유용하며, 각 페이지의 <title>, <link> 등의 내용을 공통 레이아웃으로 전달하여 동적인 레이아웃을 구성할 때 사용
+
+
+th:object: 폼에서 사용할 객체를 지정합니다.
+*{}: th:object로 지정된 객체의 필드에 접근할 때 사용됩니다.
+th:field: 폼 필드의 id, name, value 속성을 자동으로 설정해 줍니다.
+
+th:for="${#ids.prev('regions')}": 이 표현식은 체크박스와 연결된 라벨의 for 속성을 동적으로 생성합니다.
+#ids.prev('regions'): Thymeleaf의 ID 관리 기능을 사용하여, **이전 태그(여기서는 체크박스)**에 할당된 id 속성값을 자동으로 가져옵니다. #ids.prev는 이전의 th:field="*{regions}" 체크박스의 ID를 참조하여
+label과 연결되도록 해줍니다.
+라벨은 사용자가 체크박스를 쉽게 클릭할 수 있도록 체크박스와 연결됩니다(글씨 눌러도 체크된다)
+
+Map<String, String> 구조:
+Map의 key는 주로 데이터 전송이나 서버 측 처리를 위한 값입니다. 예를 들어, "SEOUL", "BUSAN", "JEJU"와 같은 코드 또는 식별자가 사용됩니다.
+Map의 value는 사용자에게 화면에 표시될 값입니다. 예를 들어, "서울", "부산", "제주"와 같은 사용자 친화적인 이름이나 라벨로 사용됩니다.
+key는 보통 짧고 식별하기 쉬운 값으로 사용됩니다. 예를 들어, "SEOUL", "BUSAN" 같은 코드는 데이터베이스나 비즈니스 로직에서 처리하기 쉽습니다.
+value는 사용자가 이해하기 쉽게 사람이 읽을 수 있는 형태로 제공됩니다. 예를 들어, "서울", "부산" 같은 값을 UI에 표시하면 사용자 친화적입니다.
+그래서 key를 주고받는데 사용하고, value는 라벨에서만 사용한다.
+
+
+
+** 국제화 **
+Spring Boot에서는 messages.properties 파일에 정의된 키-값 쌍을 통해 다국어 지원을 할 수 있습니다.
+국제화를 지원할 때는 각 언어별 메시지 파일에서 동일한 키를 사용하는 것이 필수적입니다. 키는 모든 언어에서 고정되며, 그에 대응하는 값은 각 언어별로 다르게 설정되어, 로케일에 따라 적절한 메시지가 표시됩니다.
+국가   key = value
+한국 : hello=안녕
+미국 : hello=hi
+
+**#** 유틸리티 객체 접근.
+#{...}
+#{page.addItem}
+#{label.item.itemName}
+
+**메시지 표현식(Message Expressions)**을 나타내는 구문입니다. 이 구문은 국제화(i18n) 메시지를 처리할 때 사용되며, 주로 **메시지 파일(properties 파일)**에 정의된 내용을 템플릿에서 불러와 출력할 때 사용됩니다.
+
+Thymeleaf에서 메시지 키 앞에 붙어 있는 page, label, item 같은 접두사는 메시지 파일을 구조적으로 관리하기 위한 네임스페이스 역할을 합니다. 이를 통해 메시지 키를 그룹화하고, 키 충돌을 방지하며,
+메시지 파일의 가독성을 높일 수 있습니다.
+
+
+**Safe Navigation Operator
+errors?.은 errors가 null 일때 NullPointerException이 발생하는 대신, null을 반환하는 문법이다.
+th:if에서 null은 실패로 처리되므로 오류 메시지가 출력되지 않는다.
+아래 링크 참고
+https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-operator-safe-navigation
+
+
+**th:errors="*{itemName}"**는 **BindingResult**에서 itemName라는 이름을 가진 필드의 오류를 찾고, 오류가 있으면 그 오류 메시지를 출력합니다.
+이때, **th:errors**는 항상 **BindingResult**에 저장된 검증 오류 정보를 참조합니다. 그래서 **th:errors**는 BindingResult에 접근해 오류 메시지를 가져오는 역할을 합니다.
+th:errors는 해당 필드에 대한 모든 오류 메시지를 출력하므로, 별도의 반복문 없이도 여러 개의 오류 메시지를 출력할 수 있습니다. 
+타임리프 템플릿에서 가격이나 수량 필드에 **th:each**를 사용하지 않고 단일 오류 메시지 출력만 지정했음에도, 타입 변환 오류 메시지가 출력된 이유는 다음과 같습니다:
+Spring의 자동 타입 변환 오류 처리:
+Spring MVC는 폼 데이터를 바인딩할 때, 필드 값이 모델 객체의 필드 타입과 일치하지 않으면 자동으로 BindingResult에 타입 변환 오류를 추가합니다.
+예를 들어, price 필드는 Integer 타입이지만 폼에서 문자가 입력되면, Spring은 이를 **TypeMismatchException**으로 감지하여 **BindingResult**에 자동으로 오류를 저장합니다.
+즉, new FieldError()를 자동으로 해준다.
+이때, 타임리프의 **th:errors="*{price}"**는 해당 필드의 모든 오류를 자동으로 출력합니다. 그래서 별도의 반복문 처리 없이도 타입 변환 오류가 발생하면 그 오류 메시지가 출력됩니다.
+
+**Spring이 자동으로 추가하는 것은 FieldError**입니다. 이는 필드 바인딩 또는 타입 변환 오류와 같은 상황에서 발생합니다.
+**ObjectError**는 글로벌 검증 오류로, 이를 자동으로 추가하지 않으며, 개발자가 직접 추가해야 합니다.
+
+**#fields**
+타임리프의 유틸리티 객체로, **BindingResult**를 참조하여 검증 상태와 오류 메시지를 간편하게 처리할 수 있도록 도와줍니다.
+th:if="${#fields.hasGlobalErrors()}"
+#fields 유틸리티 객체 사용. 
+사용 안한다면 아래와 같이 bindingResult 직접 써야함.
+th:if="${bindingResult.hasGlobalErrors()}"
+
+**th:errorclass는 주로 <input>, <textarea>와 같은 폼 입력 필드에만 적용할 수 있으며, 검증 오류가 발생했을 때 해당 입력 필드에만 CSS 클래스를 추가합니다.

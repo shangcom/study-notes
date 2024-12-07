@@ -1,0 +1,75 @@
+** ResponseEntity
+
+1. ResponseEntity란?
+Spring Framework에서 HTTP 응답을 생성하고 제어하기 위해 제공되는 클래스.
+HTTP 상태 코드, 응답 본문(body), 응답 헤더(headers)를 세부적으로 설정할 수 있어 RESTful API 설계에서 자주 사용됨.
+HTTP 응답의 구성 요소(상태 코드, 본문, 헤더)를 명시적으로 설정 가능.
+REST 컨트롤러(@RestController)에서 메서드 반환값으로 사용.
+체이닝 방식으로 간결하게 응답 생성 가능.
+
+
+2. 주요 메서드와 사용법
+
+1) ok(T body)
+역할: HTTP 상태 코드 200 OK 응답을 생성.
+파라미터: 응답 본문 데이터(T body).
+반환값: ResponseEntity<T>
+
+return ResponseEntity.ok()
+                     .header("Custom-Header", "Value")
+                     .body("Success!");
+
+2) created(URI location)
+역할: HTTP 상태 코드 201 Created 응답을 생성하고, Location 헤더에 생성된 리소스의 URI를 포함.
+생성된 리소스가 어딘가에 저장되고, 그것의 URI 역시 만들어진다는(create) 전제 하에 사용하는 것.
+파라미터: 생성된 리소스의 URI(URI location).
+반환값: ResponseEntity.BodyBuilder.
+
+URI location = URI.create("/users/123");
+return ResponseEntity.created(location)
+                     .header("Custom-Header", "Value")
+                     .body("Resource Created!");
+
+3) noContent()
+역할: HTTP 상태 코드 204 No Content 응답을 생성.
+파라미터: 없음.
+반환값: ResponseEntity<Void>.
+
+return ResponseEntity.noContent()
+                     .header("Custom-Header", "Value")
+                     .build();
+
+4) badRequest()
+역할: HTTP 상태 코드 400 Bad Request 응답을 생성.
+파라미터: 오류 정보(T body, 선택).
+반환값: ResponseEntity<T>.
+
+return ResponseEntity.badRequest()
+                     .header("Error-Code", "1234")
+                     .body("Invalid request data!");
+
+5) notFound()
+역할: HTTP 상태 코드 404 Not Found 응답을 생성.
+파라미터: 없음.
+반환값: ResponseEntity<Void>.
+
+return ResponseEntity.notFound()
+                     .header("Custom-Header", "Value")
+                     .build();
+
+6) status(HttpStatus status)
+역할: 지정된 HTTP 상태 코드로 응답을 생성.
+파라미터:
+상태 코드(HttpStatus status).
+응답 본문 데이터(T body, 선택).
+반환값: ResponseEntity.BodyBuilder.
+
+return ResponseEntity.status(HttpStatus.ACCEPTED)
+                     .header("Custom-Header", "Value")
+                     .body("Request accepted but not processed yet!");
+
+
+3. 체이닝 방식의 장점
+가독성: 여러 설정(본문, 헤더, 상태 코드)을 한 줄로 연결 가능.
+유연성: 필요한 응답 데이터만 선택적으로 설정.
+RESTful 설계: 상태 코드와 본문을 명확히 지정하여 REST API 설계 원칙 준수.

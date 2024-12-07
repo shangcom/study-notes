@@ -1,0 +1,16 @@
+PowerShell 설치
+
+PowerShell 관리자 권한 실행
+
+ -> 최신 버전 검색
+winget search Microsoft.PowerShell
+
+-> 
+
+Name               Id                           Version   Source
+-----------------------------------------------------------------
+PowerShell         Microsoft.PowerShell         7.4.6.0   winget
+PowerShell Preview Microsoft.PowerShell.Preview 7.5.0.101 winget
+
+-> id 매개 변수를 사용하여 Powershell 또는 Powershell 미리 보기 설치
+winget install --id Microsoft.PowerShell --source winget

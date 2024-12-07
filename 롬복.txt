@@ -1,0 +1,5 @@
+** 롬복 어노테이션
+@RequiredArgsConstructor: 클래스의 모든 final 필드와 @NonNull이 붙은 필드를 인자로 받는 생성자를 자동으로 생성
+@AllArgsConstructor: 모든 필드를 인자로 받는 생성자를 생성
+@NoArgsConstructor: 인자가 없는 기본 생성자를 생성
+@NonNull: 해당 필드를 포함하는 생성자를 생성할 때, null 값이 들어오는 것을 방지. @NonNull이 붙은 필드는 final이 아니어도 생성자에 포함

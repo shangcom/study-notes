@@ -1,0 +1,7 @@
+JSP는 자바 코드를 그대로 다 사용할 수 있다.
+<%@ page import="hello.servlet.domain.member.MemberRepository" %>
+자바의 import 문과 같다. 
+<% ~~ %>
+이 부분에는 자바 코드를 입력할 수 있다. 
+<%= ~~ %>d
+이 부분에는 자바 코드를 출력할 수 있다.

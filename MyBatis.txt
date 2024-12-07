@@ -1,0 +1,35 @@
+1. MyBatis에서 단일 파라미터 처리
+매퍼 메서드에 전달된 파라미터가 단일 객체일 경우, MyBatis는 그 객체의 필드를 바로 접근할 수 있도록 설정합니다.
+예: findAll(ItemSearchCond itemSearch)에서 itemSearch의 필드 itemName을 <if test="itemName != null">처럼 사용 가능.
+itemSearch.itemName처럼 명시적으로 작성해도 작동하지만, 단일 파라미터일 때는 생략하는 것이 일반적.
+
+2. OGNL(Object-Graph Navigation Language)
+객체의 필드 접근과 조건식 평가를 위한 언어.
+MyBatis에서 <if>, <choose>, <foreach> 같은 동적 SQL 태그에서 사용됨.
+예: <if test="itemName != null and itemName != ''">처럼 필드에 접근하여 조건을 평가함.
+
+3. OGNL 사용 규칙
+<if test="itemName != null">처럼 필드 이름만 사용해도 단일 파라미터 객체의 필드로 접근 가능.
+#{} 구문은 <if test>에서 사용할 수 없고, SQL 쿼리 내에서 파라미터 바인딩에 사용됨.
+
+
+** Mapper 인터페이스 정의:
+
+Mapper 인터페이스는 @Mapper 애노테이션이 붙어 있고, 매퍼 XML 파일의 SQL 쿼리와 매핑되는 메서드들을 정의합니다.
+
+MyBatis의 동적 프록시 생성:
+애플리케이션이 시작될 때, MyBatis는 @Mapper가 붙은 인터페이스를 스캔하여 해당 인터페이스의 동적 프록시를 생성합니다.
+동적 프록시는 런타임에 생성되는 구현체로, 실제로는 SQL 실행 로직을 가지고 있습니다.
+
+Spring Bean으로 등록:
+MyBatis가 생성한 동적 프록시(ItemMapper 구현체)는 Spring의 Bean으로 등록됩니다. 이 과정에서 @MapperScan 애노테이션을 사용하여 자동으로 스캔하고 등록할 수 있습니다.
+
+MyBatisItemRepository에 주입:
+MyBatisItemRepository에서는 생성자 주입 등을 통해 ItemMapper를 주입받습니다.
+주입된 ItemMapper는 실제로 동적 프록시로 생성된 구현체이며, 이 구현체를 통해 SQL 쿼리를 실행하고 결과를 반환받습니다.
+
+
+** Mapper 자동 인식 문제와 설정의 중요성
+ItemServiceApplication 클래스의 패키지와 ItemMapper가 올바른 위치에 있음에도 자동 주입이 되지 않는 문제는 Spring Boot의 자동 설정, MyBatis의 통합 방식, 
+또는 개발 환경(IDE, Gradle) 문제에서 기인할 수 있습니다.
+@MapperScan을 Application에 명시적으로 추가함으로써, 매퍼 스캔을 확실히 지정할 수 있으며, 이런 문제를 예방할 수 있습니다.

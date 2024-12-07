@@ -1,0 +1,361 @@
+
+**  실무에서의 접근 방식
+
+1. 테스트 설계 우선순위
+
+단위 테스트(Unit Test):
+가장 기본적인 테스트로, Mocking을 통해 빠르고 가벼운 테스트를 작성.
+
+계층별 테스트(Layered Test):
+특정 계층만 검증할 경우 @WebMvcTest, @DataJpaTest 등으로 테스트.
+
+통합 테스트(Integration Test):
+여러 계층 간의 상호작용을 검증해야 할 때만 @SpringBootTest를 사용.
+
+End-to-End 테스트:
+전체 애플리케이션의 동작을 실제 환경에서 검증.
+
+2. 실무에서 @SpringBootTest의 사용 비중
+
+비중이 낮음:
+전체 테스트 중 @SpringBootTest를 사용하는 비율은 상대적으로 적습니다.
+단위 테스트와 계층 테스트로 대부분의 요구 사항을 충족시킬 수 있습니다.
+
+효율적 사용:
+복잡한 애플리케이션 환경에서 통합 테스트나 End-to-End 테스트가 꼭 필요한 경우에만 사용됩니다.
+
+5. 정리
+@SpringBootTest는 실무에서도 중요한 도구지만, 테스트의 목적과 범위에 따라 신중히 사용해야 합니다.
+단위 테스트와 계층 테스트를 통해 빠르고 정확한 테스트를 작성하는 것이 실무에서 더 일반적입니다.
+통합 테스트가 꼭 필요한 경우에만 @SpringBootTest를 사용하는 것이 효율적입니다.
+
+
+
+** Assertions.assertThat(actual).isEqualTo(expected);
+
+actual:
+테스트하고자 하는 메서드나 객체의 결과 값.
+실제로 테스트 코드에서 수행한 동작의 결과를 반환하는 값.
+
+expected:
+예상하거나 기대하는 값.
+테스트가 성공하려면 actual과 expected가 같아야 함.
+
+
+
+
+** @Slf4j
+만약 Slf4j 어노테이션이 적용된 클래스 내부에 static 클래스를 작성했고, 이 클래스도 로거가 필요한 경우
+여기에도 @Slf4j를 붙여줘야 하는가?
+Slf4j 로거는 클래스 단위로 생성되기 때문에, 외부 클래스에 정의된 로거를 공유할 수 없음.
+따라서, 내부 static 클래스에서도 로깅을 사용하려면 @Slf4j 애노테이션을 별도로 붙여야.
+
+
+테스트 코드의 메서드명은 한국어로 해도 된다 -> 빌드에서 제외되기 때문.
+
+테스트는 반복 가능해야 한다. 테스트 결과가 다른 테스트에 영향을 미쳐서는 안된다.
+
+테스트 코드에서는 생성자를 통한 주입 말고, 필드 주입을 사용해도 괜찮다. 테스트 코드가 실행될 때만 사용할 객체이기 때문.
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
+
+
+테스트 클래스 작성 시 원본 클래스의 이름을 그대로 사용한다.
+
+테스트 메서드 작성 시, 테스트하고자 하는 원본 메서드의 이름을 그대로 사용하고, 그 뒤에 '_'을 이어 붙여 조건을 설명한다.
+    @Test
+    void deleteUser_whenUserExists_shouldRemoveUser() {
+
+
+*Test 코드 작성 요령 : given, when, then으로 구분지어 작성.
+
+//Arrange : 테스트에 필요한 데이터를 준비
+
+//Act : 실제 동작을 수행
+
+//Assert : 결과 검증
+
+* @SpringBootTest와 @Transactional 함께 사용
+
+@SpringBootTest
+- Spring container와 테스트를 함께 실행.
+
+@Transactional
+- 트랜잭션 시작: 각 테스트 메서드가 실행될 때 트랜잭션이 시작.
+- 트랜잭션 롤백: 각 테스트 메서드가 종료되면 해당 트랜잭션이 롤백됨. 테스트가 끝난 후 데이터베이스 상태가 원래대로 유지됨.
+
+
+* 중복 검사 예외 테스트
+
+@Test
+void methodName_throwsException_whenCondition() {
+    // Arrange
+    // 데이터를 준비하고 필요한 객체를 생성
+    Entity entity1 = new Entity();
+    entity1.setSomeProperty("duplicate");
+
+    Entity entity2 = new Entity();
+    entity2.setSomeProperty("duplicate");
+
+    // Act
+    service.someMethod(entity1);
+
+    // Assert
+    CustomException exception = assertThrows(CustomException.class, () -> service.someMethod(entity2));
+    assertThat(exception.getMessage()).isEqualTo("예상 예외 메시지");
+}
+
+A라는 클래스가 있다고 하자.
+원래대로라면 스프링 컨테이너에 의해 관리 받는 클래스에서만 생성자에 @Autowired 붙일 수 있음.
+그런데 ApplicationContext를 생성할 때 A 클래스를 매개변수로 넘김.
+그렇게 되면 A 클래스도 스프링 빈으로 등록될 것이고, 그러면 @Autowired 사용해도 됨.
+이 방법은 주로 스프링 부트 테스트에서 사용되며, 테스트 클래스에서 직접 설정 클래스를 지정하거나 추가 빈 클래스를 지정하여 컨텍스트를 구성할 수 있음.
+
+
+
+
+** @SpringBootTest 애노테이션
+테스트에서 스프링 부트 어노테이션 등 사용하려면 붙여야 한다.
+통합 테스트나 전체 컨텍스트를 로드해야 하는 테스트 시에 유용하며, 단위 테스트보다는 좀 더 복잡한 테스트 시나리오에 적합
+@SpringBootTest는 스프링 부트 애플리케이션 전체를 로드하는 비용이 크기 때문에, 단위 테스트에서 불필요하게 사용하면 성능 저하가 발생할 수 있음.
+@SpringBootTest는 자동으로 디폴트 적용되지 않으며, 필요할 때 명시적으로 사용
+
+1. 스프링 컨텍스트 전체를 로드해야 할 때:
+애플리케이션의 모든 빈을 로드하고, 실제 스프링 부트 애플리케이션이 실행되는 것과 같은 환경에서 테스트를 수행하고자 할 때 사용합니다.
+예를 들어, 여러 레이어(컨트롤러, 서비스, 리포지토리)가 상호작용하는 통합 테스트가 필요한 경우, @SpringBootTest를 사용해 모든 빈이 적절하게 로드되고 동작하는지 확인할 수 있습니다.
+
+2. 트랜잭션 테스트를 포함한 데이터베이스 테스트:
+@Transactional을 사용한 트랜잭션 테스트에서 실제 데이터베이스와의 상호작용을 테스트하고자 할 때, @SpringBootTest를 사용하여 스프링의 트랜잭션 매니저와 데이터 소스를 설정할 수 있습니다.
+이를 통해 데이터베이스 트랜잭션이 테스트 환경에서도 정상적으로 작동하는지 확인할 수 있습니다.
+
+3. 외부 구성 요소 또는 환경 설정이 필요할 때:
+외부 시스템과의 통신, 환경 변수 설정, application.properties/application.yml 파일의 프로필 기반 설정 등 전체 애플리케이션 설정이 필요할 때 @SpringBootTest를 사용합니다.
+
+4. 웹 애플리케이션 테스트 시:
+웹 계층 테스트에서 스프링 MVC의 모의 객체(MockMvc)나 실제 서블릿 컨테이너를 사용하여 테스트를 진행할 때, @SpringBootTest를 사용해 스프링 부트가 제공하는 웹 환경을 설정할 수 있습니다.
+예를 들어, @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)로 애플리케이션을 임의의 포트에서 실행하고 실제 HTTP 요청 테스트를 수행할 수 있습니다.
+
+기본적으로 단위 테스트에서는 @Test와 같은 애노테이션만 사용해도 테스트가 수행되며, 애플리케이션 컨텍스트 로딩 없이 실행됩니다.
+만약 특정 계층의 빈만 로드하고 싶을 때는 @MockBean, @WebMvcTest, @DataJpaTest와 같은 애노테이션을 사용할 수 있습니다.
+
+
+
+
+
+** @SpringBootTest
+
+1. 주요 역할
+
+애플리케이션 클래스 기반 컨텍스트 초기화
+@SpringBootTest는 테스트 클래스가 위치한 패키지를 기준으로 상위에 있는 애플리케이션 시작 클래스(주로 @SpringBootApplication이 붙은 클래스)를 탐색한다.
+이를 기반으로 애플리케이션의 설정 환경을 테스트 컨텍스트에서 재현한다.
+
+애플리케이션 컨텍스트 로드
+Spring Boot의 자동 구성(auto-configuration) 메커니즘을 적용하여 애플리케이션의 구성 정보를 컨텍스트에 로드한다.
+@Component, @Service, @Repository, @Controller 등으로 정의된 모든 Bean이 컨텍스트에 등록되며, @Bean 메서드를 통해 필요한 객체가 생성된다.
+
+테스트 환경 구성
+테스트를 위한 내장 서버를 시작하거나(webEnvironment 설정에 따라), 테스트용 데이터베이스 연결을 구성하는 등 필요한 환경을 제공한다.
+
+
+2. 동작 방식
+
+애플리케이션 클래스 탐색
+@SpringBootTest는 테스트 클래스가 위치한 패키지의 경로를 기준으로 상위에서 @SpringBootApplication 클래스를 자동으로 탐색하여 애플리케이션 설정 정보를 가져온다.
+
+컨텍스트 초기화
+애플리케이션의 설정 정보(application.properties 등)와 Bean 정의를 기반으로 컨텍스트(ApplicationContext)를 구성한다.
+초기화된 컨텍스트는 애플리케이션의 모든 Bean을 관리하며, 테스트에 필요한 의존성을 주입한다.
+
+테스트 실행
+테스트 클래스에서 @Autowired 등으로 컨텍스트에 등록된 Bean을 주입받아 테스트를 실행한다.
+
+
+3. 주요 옵션
+
+webEnvironment
+@SpringBootTest는 webEnvironment 속성을 통해 테스트 환경의 웹 서버 동작 방식을 설정할 수 있다.
+
+WebEnvironment.NONE
+내장 웹 서버를 시작하지 않는다.
+웹 계층의 Bean은 컨텍스트에 등록되지 않는다.
+
+WebEnvironment.MOCK
+MockServlet 환경을 구성하여 웹 계층 테스트를 지원한다.
+MockMvc를 사용할 수 있다.
+
+WebEnvironment.RANDOM_PORT
+내장 웹 서버를 시작하며, 랜덤한 포트를 사용한다.
+REST API 테스트 등에 적합하다.
+
+WebEnvironment.DEFINED_PORT
+내장 웹 서버를 시작하며, 설정된 포트를 사용한다(기본값: 8080).
+
+
+4. 사용 사례
+
+통합 테스트(Integration Test)
+애플리케이션의 여러 계층(Service, Repository, Controller 등)을 통합적으로 테스트한다.
+데이터베이스, API, 서비스 계층이 올바르게 동작하는지 확인하는 데 적합하다.
+
+컨텍스트 로드 확인(Smoke Test)
+애플리케이션 컨텍스트가 올바르게 초기화되는지 검증한다.
+구성 파일이나 빈 설정에 문제가 없는지 확인하는 데 사용된다.
+
+
+5. H2
+@SpringBootTest는 컨텍스트를 재사용하므로 H2 데이터베이스는 테스트 간 공유됨.
+테스트 간 데이터 간섭을 방지하려면, 다음 방법 중 하나를 사용.
+
+@BeforeEach에서 repository.deleteAll() 호출.
+@DirtiesContext로 테스트 간 컨텍스트 재생성.
+@DataJpaTest를 사용하여 테스트별로 별도의 컨텍스트 로드.
+
+
+결론
+@SpringBootTest는 Spring Boot 애플리케이션 전체를 로드하여 테스트 환경을 구성하고, 테스트를 위한 통합적인 설정을 지원한다.
+주로 통합 테스트와 컨텍스트 초기화 검증에 사용되며, 다양한 옵션을 통해 웹 계층, 데이터 계층 등 특정 환경에 맞춘 테스트를 손쉽게 실행할 수 있다.
+효율적인 테스트 설계를 통해 테스트 실행 속도와 테스트 신뢰성을 높이는 것이 실무에서는 핵심입니다. 
+
+
+
+** @AutoConfigureMockMvc와 MockMvc
+
+1. @AutoConfigureMockMvc란?
+@AutoConfigureMockMvc는 Spring Boot 테스트에서 MockMvc 객체를 자동으로 구성하고, 이를 테스트에서 사용할 수 있도록 설정하는 애노테이션이다.
+주로 @SpringBootTest와 함께 사용되며, 컨트롤러 계층을 테스트하기 위해 Spring MVC의 Mock 환경을 구성한다.
+
+
+2. MockMvc란?
+MockMvc는 Spring MVC 테스트 도구로, 실제 서버를 실행하지 않고도 HTTP 요청과 응답을 테스트할 수 있다.
+DispatcherServlet의 동작을 내부적으로 시뮬레이션하며, 애플리케이션의 웹 계층을 빠르고 독립적으로 검증할 수 있도록 설계되었다.
+
+
+MockMvc의 주요 특징
+
+가상(Mock) HTTP 요청/응답 처리:
+실제 네트워크를 통해 요청을 보내지 않고도 컨트롤러 로직을 테스트한다.
+
+빠른 테스트:
+서버를 띄우지 않기 때문에 네트워크 지연이 없고 테스트 속도가 빠르다.
+
+Spring MVC의 DispatcherServlet 동작 시뮬레이션:
+Spring MVC의 핵심 흐름을 테스트 환경에서 그대로 재현한다.
+
+
+3. @AutoConfigureMockMvc의 역할
+테스트 컨텍스트 초기화 시 MockMvc 객체를 생성하고 주입하여 사용할 수 있도록 설정한다.
+Spring 컨트롤러 계층과 연결된 Bean을 포함하여 테스트 환경을 구성한다.
+웹 계층 테스트를 지원하며, 가상의 HTTP 요청과 응답을 기반으로 컨트롤러의 동작을 검증할 수 있게 한다.
+ 
+
+4. MockMvc가 적합한 경우
+
+컨트롤러 단위 테스트:
+REST API의 엔드포인트 동작과 컨트롤러 로직을 검증할 때 적합하다.
+
+빠른 테스트가 필요한 경우:
+네트워크 요청 없이도 컨트롤러 계층을 빠르게 테스트할 수 있다.
+
+외부 시스템 의존성 제거:
+외부 시스템(DB, 서드파티 API 등)과 독립적으로 컨트롤러의 동작을 검증할 수 있다.
+
+
+5. perform (RequestBuilder)
+ : HTTP 요청 생성 및 실행한 결과를 ResultActions 타입으로 반환.
+
+HTTP 요청 메서드
+get(String url, Object... uriVars) - 리소스 조회. 쿼리 파라미터 사용. 요청 본문이 없으므로 요청 본문 데이터 타입도 없다. 
+post(String urlTemplate, Object... uriVars) - 새 리소스 생성. 요청 본문의 contentType 지정하고 거기에 맞는 요청 본문 작성. 
+put(String urlTemplate, Object... uriVars) - 리소스 전체 업데이트. 
+patch(String urlTemplate, Object... uriVars) - 리소스 일부 업데이트.
+delete(String urlTemplate, Object... uriVars) - 리소스 삭제.
+
+
+부가적인 체이닝 메서드
+.contentType(MediaType) - 요청 본문 데이터의 타입 설정 (예: application/json). contentType은 오직 요청 본문에 대한 것으로, url의 query parameter와 무관 (둘을 동시에 보낼 수도 있지만 잘 사용하지 않음). 
+.accept(MediaType) - 서버 응답 데이터의 타입 설정 (예: application/json). 클라이언트가 원하는 타입을 서버에 지정함.
+.content(String) - 요청 본문 데이터를 JSON 문자열 등으로 전달.
+.param(String, String) - 쿼리 파라미터 전달 (예: ?id=1).
+.header(String, String) - 요청 헤더 추가.
+
+예시1)
+mockMvc.perform(get("/api/users")
+                .param("page", "1")
+                .param("size", "10")
+                .accept(MediaType.APPLICATION_JSON));
+
+"/api/users" URL로 HTTP GET 요청을 보냄.
+쿼리 파라미터 page=1과 size=10을 요청 URL에 추가.
+최종 URL은 "/api/users?page=1&size=10"
+Accept 헤더를 **application/json**으로 설정하여, 클라이언트가 JSON 형식의 응답을 받을 의도가 있음을 서버에 알림.
+위 조건의 요청을 생성하고 실행한 결과를 ResultActions 타입으로 반환한다. 
+
+
+
+예시2)
+mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"John\"}"));
+
+"/api/users" URL로 HTTP POST 요청을 생성.
+contentType() : Content-Type 헤더를 **application/json**으로 설정하여, 요청 본문의 데이터 형식이 JSON임을 서버에 전달하도록 구성.
+content() :  요청 본문에 포함할 데이터를 인자로 받는다. 인자는 contentType()에서 설정한 MIME 타입에 따라 알맞은 형식으로 작성되어야 한다.
+여기서는 contentType이 JSON이기 때문에 content()에서 JSON 형식 문자열을 인자로 받았음.
+만약 XML 형식이었다면 XML 형식의 문자열을 받아야 오류 없다.
+
+
+
+** ResultActions 객체 : MockMvc.perform의 결과를 담고 있음.
+andExpect(): 응답 결과 검증.
+andDo(): 디버깅 및 로깅.
+header(), param(), content(): 요청 데이터 설정.
+
+
+
+
+** 테스트 코드에서 접근제어자
+
+테스트 코드에서는 접근제어자를 최소한으로 설정하고 기본값을 사용하는 것이 일반적이다. 
+메서드는 default 접근 수준으로 작성하고, 필드는 private을 기본으로 설정하며, 필요 시 상속이나 공유를 고려하여 protected나 default를 선택한다. public 접근 수준은 특별한 상황을 제외하고 사용하지 않는 것이 바람직하다.
+테스트 클래스는 주로 애플리케이션 코드의 동작 검증을 목표로 하므로, 클래스 내부의 캡슐화는 상대적으로 덜 중요하다. 
+필요 이상으로 접근제어자를 엄격히 관리하는 것은 테스트 코드 작성 및 유지보수의 효율성을 떨어뜨릴 수 있다. 
+따라서, 간결함과 실용성을 우선으로 하고, 불필요한 접근제어자 지정은 지양한다.
+
+
+메서드
+테스트 메서드는 기본적으로 JUnit 프레임워크에 의해 실행되며, JUnit 5 이상에서는 default 접근 수준으로도 충분히 동작한다. 특별한 상황에서만 접근제어자를 지정하는 것이 권장된다.
+
+default : 접근제어자를 생략하는 방식으로, 테스트 메서드를 선언하는 가장 일반적인 방법이다.
+protected : 테스트 메서드가 상속 구조에서 재사용될 경우에 사용한다.
+public : JUnit 4에서는 필수적이었으나, JUnit 5 이상에서는 불필요하다. 특별한 이유가 없다면 사용하지 않는다.
+private : 사용할 수 없다. JUnit은 리플렉션을 통해 메서드를 실행하기 때문에, private 접근 수준의 메서드는 호출되지 않는다.
+
+
+필드
+테스트 필드는 메서드보다 접근제어자의 사용 의도가 더 명확하게 드러나는 경우가 많다. 일반적으로 외부 접근을 차단하고 테스트 클래스 내부에서만 사용하도록 private을 기본값으로 설정한다. 특정 상황에 따라 접근 수준을 조정할 수 있다.
+
+private : 테스트 클래스 내부에서만 사용하는 필드는 기본적으로 private으로 선언한다.
+default : 동일 패키지 내 다른 테스트 클래스와 자원을 공유해야 할 경우 사용한다. 접근제어자를 생략하면 기본값으로 적용된다.
+protected : 공통 필드를 부모 테스트 클래스에서 정의하고, 이를 서브클래스에서 재사용할 경우 적합하다.
+public : 테스트 필드에서는 거의 필요하지 않으며, 특별한 이유가 없는 한 지양한다.
+
+
+
+
+---------------------------------------------------------------------------------------------------------------
+
+테스트 애노테이션
+
+** @Sql
+
+
+
+
+@Sql("/insert-members.sql")
+    @Test
+    void getAllMembers() {
+        List<Member> members = memberRepository.findAll();
+
+        Assertions.assertThat(members.size()).isEqualTo(3);
+    }

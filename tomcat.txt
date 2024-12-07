@@ -1,0 +1,129 @@
+** 톰캣과 스프링 MVC의 관계
+톰캣이 DispatcherServlet을 서블릿으로 인식:
+서블릿 컨테이너에서 DispatcherServlet이 서블릿으로 등록되면, 스프링 MVC 애플리케이션의 모든 요청이 DispatcherServlet으로 전달됩니다.
+톰캣은 단지 서블릿 환경을 제공하며, DispatcherServlet이 스프링 컨테이너와 통신하여 스프링 MVC 애플리케이션의 요청을 처리합니다.
+
+DispatcherServlet을 통한 스프링 컨테이너와의 연결:
+DispatcherServlet은 스프링 MVC에서 스프링 컨테이너(ApplicationContext)를 참조하고, 이를 통해 컨트롤러 빈을 호출하여 HTTP 요청을 처리합니다.
+DispatcherServlet은 요청-응답의 흐름을 중앙에서 제어하며, 스프링 컨테이너의 빈을 활용하여 비즈니스 로직을 수행하고 결과를 반환합니다.
+
+톰캣의 역할 한정:
+톰캣은 스프링 컨테이너에 대한 아무런 정보를 가지지 않으며, 오직 서블릿 환경과 HTTP 요청-응답의 전달 기능만 제공합니다.
+스프링 MVC 애플리케이션의 실제 로직은 스프링 컨테이너에서 관리되며, 이 모든 흐름은 DispatcherServlet이 중간에서 담당합니다.
+
+핵심 정리
+톰캣(서블릿 컨테이너)는 서블릿 기반 웹 애플리케이션의 요청을 DispatcherServlet으로 전달하며, 스프링 컨테이너에 직접 접근하지 않습니다.
+DispatcherServlet은 스프링 MVC의 요청 흐름을 관리하고, 스프링 컨테이너(ApplicationContext)를 통해 컨트롤러 및 기타 빈을 호출하여 응답을 처리합니다.
+스프링 MVC에서 서블릿 컨테이너와 스프링 컨테이너는 DispatcherServlet을 매개로 서로 연결됩니다.
+따라서, 톰캣은 스프링 컨테이너와 직접적인 연관이 없으며, 단지 DispatcherServlet을 통해 스프링 MVC와 상호작용하여 웹 애플리케이션의 요청을 처리합니다.
+
+
+
+
+** IDE 없이 스프링 프로젝트 실행하기
+
+1. cmd에 프로젝트 루트 디렉토리로 이동
+2. gradlew.bat build 입력 (gradlew build 만 입력해도 될 수도 있음) -> jar / war 파일 생성됨.
+3. build/libs로 이동 (생성된 프로젝트 파일 여기에 있음)
+4. java -jar 프로젝트.jar 입력
+
+종료 :  Ctrl+c
+
+빌드 삭제 : 프로젝트 루트 디렉토리에서 gradlew.bat clean build
+
+
+** 톰캣 실행 
+cmd -> 설치 경로.bin -> startup
+
+
+** 톰캣에 war 올리기
+톰캣 꺼진 상태에서
+설치 경로 -> webapps -> 붙여넣기
+톰캣 켠 후 브라우저에서 주소 치면 들어가진다.
+
+톰캣이 war 압축 자동으로 푼다.
+
+
+** 인텔리제이에 톰캣 수동으로 추가하기 (톰캣을 Servlet Container로 사용하겠다!)
+Alt + Shift + F10 : RUN
+1. edit configuration
+ '+' -> TomcatServer -> Local -> Tomcat Server 추가됨.
+
+2. Server 탭
+Configure에서 톰캣 설치 경로, 버전 맞춘다.
+VM options에 -Dfile.encoding=UTF-8 추가, 로그에 한글 깨짐 방지
+3. Deployment 탭
+'+' -> Artifact -> war 파일 선택 -> ApplicationContext 고치기.
+
+ * 현재 run configuration에서 톰캣을 servlet container으로 지정했음.
+ * 톰캣 서버를 실행하면, 톰캣이 서블릿 컨테이너로 작동함.
+ * 서블릿 컨테이너는 자동으로 META-INF/services/jakarta.servlet.ServletContainerInitializer 파일을 스캔하여,
+ * 해당 파일에 등록된 ServletContainerInitializer 구현 클래스의 인스턴스를 자동으로 생성, 초기화 작업에 사용한다.
+ * 구현체 각각의 onStartup()를 호출하여 애플리케이션의 초기 설정을 수행하고, 서블릿과 필터를 등록한다.
+ * 여기까지 완료되면 ServletContainerInitializer 구현 인스턴스의 역할은 종료.
+ * 톰캣이 실행되고 나면, 클라이언트의 HTTP 요청이 톰캣으로 전달되고,
+ * 톰캣은 이를 해당 서블릿이나 스프링 MVC의 DispatcherServlet에 전달하여 요청을 처리한다.
+
+
+
+
+** 톰캣의 컨텍스트(Context)
+톰캣의 컨텍스트(Context)는 톰캣 서버가 여러 애플리케이션을 구분하고, URL 경로를 통해 접근할 수 있도록 설정하는 논리적인 이름이자 경로입니다. 각 애플리케이션은 고유한 컨텍스트 경로를 가짐으로써, 클라이언트는 해당 경로를 통해 특정 애플리케이션에 접근할 수 있습니다. 이 개념은 **외부 톰캣(독립적으로 설치된 톰캣)**과 **내장 톰캣(애플리케이션에 포함된 톰캣)**에서 다소 다르게 적용됩니다.
+
+1. 톰캣의 컨텍스트 개념
+컨텍스트(Context): 톰캣이 애플리케이션을 구분하기 위해 사용하는 논리적인 이름이자 URL 경로입니다. 각 애플리케이션에 고유한 컨텍스트 경로를 부여하여, 톰캣이 클라이언트의 요청을 해당 애플리케이션으로 라우팅하게 합니다.
+컨텍스트 경로(Context Path): 클라이언트가 톰캣 서버의 특정 애플리케이션에 접근할 때 사용하는 URL 경로입니다. 예를 들어, http://localhost:8080/myapp에서 /myapp이 컨텍스트 경로입니다.
+컨텍스트를 통해 톰캣은 서버 내 여러 애플리케이션을 구분하고 각 URL 경로에 매핑하여 클라이언트가 특정 애플리케이션에 접근할 수 있게 합니다.
+
+2. 외부 톰캣 사용 시 컨텍스트 설정
+외부 톰캣은 톰캣 서버가 독립적으로 설치되어 webapps 폴더를 통해 애플리케이션을 배포하고 관리합니다.
+
+webapps 폴더:
+webapps는 톰캣의 기본 애플리케이션 배포 디렉토리입니다. 이 폴더 내에 애플리케이션 폴더나 WAR 파일을 배치하면 톰캣이 자동으로 해당 애플리케이션을 배포합니다.
+예를 들어, webapps/myapp 폴더를 생성하면 톰캣은 이를 /myapp 컨텍스트로 인식하고, http://localhost:8080/myapp URL로 접근할 수 있게 합니다.
+
+루트 컨텍스트 설정:
+webapps/ROOT 폴더에 애플리케이션을 배치하면 톰캣은 이를 루트 컨텍스트로 인식하여, 클라이언트가 http://localhost:8080/으로 바로 접근할 수 있습니다.
+이 방식은 해당 애플리케이션을 톰캣 서버의 기본 애플리케이션으로 지정하는 역할을 합니다.
+
+3. 내장 톰캣 사용 시 컨텍스트 설정
+내장 톰캣은 애플리케이션에 톰캣 서버가 포함된 형태로, 주로 스프링 부트와 같은 프레임워크에서 사용합니다. 내장 톰캣에서는 외부의 webapps 폴더 없이도 코드와 설정 파일을 통해 컨텍스트를 설정할 수 있습니다.
+
+설정 파일에서 컨텍스트 경로 지정:
+내장 톰캣에서는 application.properties나 application.yml 파일을 통해 server.servlet.context-path=/myapp와 같이 컨텍스트 경로를 지정할 수 있습니다.
+예를 들어, server.servlet.context-path=/myapp 설정을 추가하면, 애플리케이션은 http://localhost:8080/myapp에서 접근할 수 있습니다.
+
+기본 루트 컨텍스트 설정:
+내장 톰캣에서 별도로 context-path를 지정하지 않으면 루트 컨텍스트(/)로 자동 설정됩니다. 이 경우, 애플리케이션은 http://localhost:8080/ 경로로 바로 접근 가능하게 됩니다.
+
+addContext("", "/") 코드 사용:
+내장 톰캣에서는 addContext("", "/") 코드를 사용해 루트 컨텍스트로 설정할 수 있습니다.
+Context context = tomcat.addContext("", "/");
+첫 번째 인자 "": 빈 문자열을 사용하면 톰캣이 해당 애플리케이션을 루트 컨텍스트로 인식하게 됩니다.
+두 번째 인자 "/": 애플리케이션이 루트 경로로 동작할 수 있도록 지정하며, 파일 시스템의 webapps 폴더 경로와는 무관하게 설정됩니다.
+이 설정 덕분에 내장 톰캣은 외부 폴더 없이도 루트 경로에서 애플리케이션을 실행할 수 있습니다.
+
+4. 톰캣 수동 설정 시 Deployment 탭에서의 컨텍스트 설정
+IDE에서 톰캣을 수동으로 설정할 경우, Deployment 탭에서 애플리케이션의 배포와 컨텍스트 경로를 설정할 수 있습니다.
+
+Application Context:
+Deployment 탭에서 애플리케이션을 추가한 후, Application context 필드에 /myapp과 같은 컨텍스트 경로를 입력하면 톰캣은 http://localhost:8080/myapp URL로 해당 애플리케이션을 매핑합니다.
+/로 지정할 경우 루트 컨텍스트로 설정되어 http://localhost:8080/ 경로에서 바로 접근할 수 있습니다.
+
+외부 톰캣과의 관계:
+Deployment 탭에서 설정한 컨텍스트 경로는 톰캣의 webapps 폴더에 배포된 애플리케이션과 동일한 방식으로 URL에 매핑됩니다. Deployment 탭을 통해 외부 톰캣과 같은 방식으로 애플리케이션 구분과 URL 접근을 설정할 수 있습니다.
+
+
+종합 요약
+외부 톰캣:
+톰캣을 독립적으로 설치하고 webapps 폴더를 통해 애플리케이션을 배포합니다.
+webapps/ROOT 폴더에 애플리케이션을 넣으면 루트 경로(http://localhost:8080/)에서 접근할 수 있습니다.
+
+내장 톰캣:
+애플리케이션에 톰캣이 포함된 형태로, webapps 폴더 없이 코드(addContext("", "/") 또는 설정 파일)를 통해 루트 경로를 지정할 수 있습니다.
+설정 파일이나 코드로 컨텍스트 경로를 지정하며, 기본적으로 루트 컨텍스트로 설정됩니다.
+
+Deployment 탭:
+IDE에서 수동으로 톰캣 설정 시, GUI로 애플리케이션의 컨텍스트 경로를 지정하여 URL 매핑을 관리할 수 있습니다.
+루트 컨텍스트(/)로 지정하면 http://localhost:8080/ 경로에서 애플리케이션에 바로 접근할 수 있습니다.
+이러한 방식으로 톰캣은 외부 설치된 경우와 내장 톰캣일 때 각각의 방식으로 컨텍스트 경로를 설정하고 URL을 통해 클라이언트가 애플리케이션에 접근할 수 있도록 합니다.
