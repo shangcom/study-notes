@@ -1,0 +1,76 @@
+** 스프링 시큐리티
+
+1. 개요
+스프링 시큐리티는 애플리케이션의 보안을 담당하는 프레임워크로, 인증(Authentication)과 인가(Authorization)를 주요 기능으로 제공한다.
+이러한 기능은 서블릿 필터 체인(Servlet Filter Chain)을 통해 구현되며, 클라이언트의 요청이 애플리케이션에 도달하기 전에 보안 검사를 수행한다.
+
+
+
+2. 특징
+
+보안 기능의 포괄성:
+인증, 인가, CSRF 보호, 세션 관리, 암호화 등 다양한 보안 기능을 지원.
+
+확장성:
+기본 제공 기능을 커스터마이징 가능.
+
+플러그인 기반 아키텍처:
+보안 규칙을 필터 체인(SecurityFilterChain)으로 구현하여 유연하게 관리.
+
+
+3. 동작 원리
+스프링 시큐리티의 필터 체인은 DelegatingFilterProxy (deletage :  대리자, 위임하다) 를 통해 동작하며, 이는 스프링 애플리케이션 컨텍스트에서 정의된 보안 필터들을 위임받아 처리한다.
+이러한 필터들은 인증, 인가, CSRF 보호, 세션 관리 등 다양한 보안 기능을 수행하며, 보안 검사를 통과한 요청만이 디스패처 서블릿(DispatcherServlet)으로 전달되어 실제 애플리케이션 로직이 처리된다.
+
+1) 모든 HTTP 요청은 Servlet Filter Chain에서 스프링 시큐리티의 DelegatingFilterProxy를 거치며, SecurityFilterChain이 요청을 보안 규칙에 따라 처리.
+2) 인증, 인가, CSRF 보호 등의 검사를 거쳐 요청이 안전하다고 판단되면 DispatcherServlet으로 전달.
+2-1) 보안 규칙에 어긋나는 요청은 차단되거나 오류를 반환.
+
+
+
+
+** 스프링 시큐리티 기능
+
+1. 인증(Authentication 아th엔디케이션) : 사용자의 신원을 확인하는 기능.
+
+AuthenticationManager: 인증 프로세스를 총괄.
+AuthenticationProvider: 인증 방식 정의 (예: DB 인증, LDAP 인증).
+UserDetailsService: 사용자 정보를 로드하는 인터페이스.
+PasswordEncoder: 비밀번호 암호화/검증.
+예: 사용자가 올바른 이메일/비밀번호를 입력했는지 확인.
+
+  
+2. 인가(Authorization) : 사용자가 요청한 리소스에 접근할 수 있는 권한이 있는지 검증.
+
+AccessDecisionManager: 접근 권한 결정.
+SecurityContext: 현재 사용자의 인증 정보를 저장.
+@PreAuthorize, @PostAuthorize: 메서드 기반 권한 제어.
+URL 기반 권한 제어: .authorizeRequests()를 통한 URL 접근 제어.
+예: /admin 경로는 ADMIN 권한만 접근 가능하도록 설정.
+
+
+3. HTTP 보안 설정(HttpSecurity) : HTTP 요청/응답과 관련된 보안 기능을 설정.
+스프링 시큐리티는 CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조) 공격을 방지하기 위해 CSRF 토큰을 사용한다. 이는 주로 폼 기반 요청에서 사용되지만, AJAX 요청이나 API 호출과 같은 폼이 아닌 요청에서도 CSRF 토큰을 포함해야 한다.
+
+폼이 아닌 요청에서의 CSRF 토큰 포함 방법:
+AJAX 요청의 경우, CSRF 토큰을 HTTP 헤더에 포함시켜 전송할 수 있다.
+예를 들어, JavaScript를 사용하여 CSRF 토큰을 추출하고, 이를 AJAX 요청의 헤더에 추가하는 방식이다.
+스프링 시큐리티는 기본적으로 CSRF 토큰의 이름과 값을 자동으로 생성하며, 개발자는 필요에 따라 토큰의 이름을 커스터마이징할 수 있다. 그러나 CSRF 토큰의 값은 스프링 시큐리티에 의해 자동으로 생성되고 관리된다.
+
+CSRF 보호: .csrf()로 설정.
+CORS 설정: .cors()로 교차 출처 리소스 공유 관리.
+세션 관리: .sessionManagement()로 세션 정책 설정.
+폼 기반 로그인: .formLogin()으로 로그인 페이지 설정.
+HTTP Basic 인증: .httpBasic()으로 기본 인증 설정.
+헤더 보안: .headers()로 응답 헤더 관리.
+CSRF는 여기에서 다루어지는 기능 중 하나로, HTTP 요청의 정당성을 검증하기 위한 보호 메커니즘.
+
+
+4. 세부 보안 기능 : 특수한 요구 사항을 충족하거나 애플리케이션의 추가적인 보안 강화를 위한 기능.
+
+주요 기능:
+Remember-Me: 로그인 상태 유지.
+OAuth2: 소셜 로그인 및 인증.
+필터 체인 구성: 커스텀 필터 추가.
+권한 계층 설정: Role Hierarchy를 이용한 계층적 권한 설정.
+로그아웃 처리: .logout()으로 로그아웃 시 세션 무효화 등 설정.
