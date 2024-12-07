@@ -73,7 +73,7 @@ DelegatingFilterProxy는 스프링 컨텍스트에 정의된 SecurityFilterChain
 
 2.1. HttpSecurity 객체 생성 및 주입
 스프링은 SecurityFilterChain 빈을 생성하기 위해 HttpSecurity 객체를 자동으로 주입.
-HttpSecurity는 보안 규칙을 정의하고 SecurityFilterChain을 빌드하는 설정 도구로 작동.
+HttpSecurity는 스프링 시큐리티가 제공하는 클래스이며, 보안 규칙(인증, 인가, CSRF, 세션 관리 등)을 정의하는 데 사용된다.
 
 2.2. 개발자 정의 보안 설정
 개발자가 작성한 @Bean 메서드에서 HttpSecurity DSL(도메인 특화 언어)을 사용해 보안 규칙을 설정.
