@@ -23,6 +23,7 @@
 이러한 필터들은 인증, 인가, CSRF 보호, 세션 관리 등 다양한 보안 기능을 수행하며, 보안 검사를 통과한 요청만이 디스패처 서블릿(DispatcherServlet)으로 전달되어 실제 애플리케이션 로직이 처리된다.
 
 1) 모든 HTTP 요청은 Servlet Filter Chain에서 스프링 시큐리티의 DelegatingFilterProxy를 거치며, SecurityFilterChain이 요청을 보안 규칙에 따라 처리.
+    DelegatingFilterProxy : 스프링 시큐리티의 진입점 역할을 하는 서블릿 필터. 요청을 SecurityFilterChain에 위임.
 2) 인증, 인가, CSRF 보호 등의 검사를 거쳐 요청이 안전하다고 판단되면 DispatcherServlet으로 전달.
 2-1) 보안 규칙에 어긋나는 요청은 차단되거나 오류를 반환.
 
@@ -35,6 +36,24 @@ HTTP 요청은 필터 체인을 통해 보안 검사를 받는다.
 요청이 보안 규칙에 적합하면 디스패처 서블릿으로 전달된다.
 그렇지 않으면 요청이 차단(반려)된다.
 
+
+기본 설정의 흐름
+
+초기화:
+스프링 부트는 DelegatingFilterProxy를 자동으로 서블릿 컨테이너에 등록.
+@EnableWebSecurity가 선언된 설정 클래스에서 SecurityFilterChain이 생성됨.
+
+필터 체인의 생성:
+HttpSecurity를 통해 보안 규칙을 정의하고 SecurityFilterChain을 생성.
+URL 접근 제어, 인증 방식, CSRF 보호, 세션 관리 등을 설정.
+
+보안 규칙 적용:
+요청이 필터 체인을 통과하며 보안 검사를 받음.
+모든 요청은 인증 및 인가 검사를 통과해야 컨트롤러로 전달됨.
+
+요청 처리의 결과:
+보안 검사를 통과한 요청: 컨트롤러로 전달되어 애플리케이션 로직 실행.
+보안 규칙에 위반된 요청: 오류 반환 또는 리다이렉션 처리.
 
 
 
@@ -117,8 +136,8 @@ SecurityContextHolderStrategy: SecurityContext를 저장하고 관리하는 전�
 역할: 사용자 이름과 비밀번호를 기반으로 인증을 처리.
 
 사용되는 빈:
-AuthenticationManager: 인증 작업의 중심 역할.
-UserDetailsService: 사용자 정보를 로드.
+AuthenticationManager: 인증 요청 처리하는 중심 역할. 인증을 위임받아 실행하는 AuthenticationProvider를 포함.
+UserDetailsService: 사용자 정보를 로드하는 인터페이스. 데이터베이스에서 사용자 정보를 가져오기 위해 커스터마이징 가능.
 PasswordEncoder: 비밀번호를 암호화하고 비교.
 
 
