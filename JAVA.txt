@@ -828,6 +828,7 @@ Parent parent = new Child(); // 업캐스팅: 자동 허용
 Child child = (Child) parent; // 다운캐스팅: 명시적 캐스팅 필요
 Parent invalid = new Parent();
 Child invalidChild = (Child) invalid; // 컴파일 허용, 런타임 오류 발생 가능
+런타임에 위 코드가 실행될 때가 돼서야 JVM이 객체의 실제 타입을 검사하고 런타임 오류가 발생한다.
 
 1-2. 메서드 및 필드 접근 확인
 목적: 참조 변수의 선언된 타입에 따라 호출 가능한 메서드와 필드를 확인.
